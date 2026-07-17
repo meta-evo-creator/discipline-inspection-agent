@@ -1,4 +1,4 @@
-# Agent 0 — Scope (Entry Domain Definition)
+# Agent 0 — Scope (Issue Scoping · v2.1)
 
 > First entry Agent for discipline inspection. Extracts core elements from the user's raw input and defines the inspection domain.
 > 🔴 **Step 0b Mandatory Protocol (2026-07-08)**: All identity/legal classifications must undergo rg verification before proceeding. "I think I know" is prohibited.

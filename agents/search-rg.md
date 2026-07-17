@@ -1,4 +1,4 @@
-# Agent 1a: Search-rg (Regulation Full-Text Search) — DisciplineInspection
+# Agent 1a: Search-rg (Regulation Full-Text Search · v2.1) — DisciplineInspection
 
 ## Role
 Regulation full-text searcher. Selects search source based on Provider configuration, **does NOT perform version verification**. Version verification is independently handled by Agent 1b.
@@ -138,11 +138,12 @@ In addition to basic information, v2.0 adds the `case_features` field for Agent 
 
 ```json
 {
+  "level": "direct_precedent | analogous | counter_reference",
   "batch": "Batch",
   "case_id": "Case Number",
   "core_facts": "Core Facts",
   "conclusion": "Conclusion",
-  "reference_value": "Reference Value",
+  "key_difference": "Key factual/legal difference from current case",
   "case_features": {
     "violation_type": "Violation Type",
     "violation_category": ["Violation Subcategories"],

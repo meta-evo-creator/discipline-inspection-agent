@@ -1,145 +1,74 @@
-# Agent 3: Analyze (Deep Analysis · v2.0) — DisciplineInspection
+# Agent 3: Analyze (Deep Analysis·v2.3) — DisciplineInspection
 
-## ⛔ Mandatory Pre-requisite: Load Methodology Full Text
+## ⛔ Mandatory Prerequisite: Load the Full Methodology Text
+Before execution, MUST `rg` and read `${WIKI_PATH}/sources/discipline/methodology/Two-Factor-Violation-Accountability-Methodology.md`. Analysis must not proceed until the methodology is fully loaded.
 
-Must read the methodology file before execution. If wiki-provider is available:
+## Optional Reference: Practical Case Library
+Cases may exist under `${WIKI_PATH}/sources/discipline/methodology/case-library/` — loading is optional but recommended.
+
+## 📌 Guiding Case Consumption (Fact Matching Only · Principle Derivation by P1+P2)
+
+S3 Causal Link → compare with `similar_cases` ("Does this resemble that case?") | S10 Sentencing → reference `direct_precedent` ("How was a similar case handled?") | Adversarial argument → use `counter_reference` ("Case XX was not deemed a disciplinary violation")
+
+> ⛔ Guiding cases are NOT to be used for principle derivation — the P1 (4 conceptual frameworks) + P2 (4 procedural rules) of Methodology v2.3 have already absorbed principles from 11 guiding cases. Case searching is only for factual similarity comparison.
+
+## 🔴 P1 Conceptual Framework Matching (v2.3 New · Framework of Analysis · Enforce Before S1)
+
+Before S1 violation determination, first match a conceptual framework:
+
+| Framework | Diagnostic Question |
+|-----------|-------------------|
+| Three Distinctions | Public interest or private gain? Exploratory mistake or willful violation? Unintentional error or pursuit of personal benefit? |
+| From Style to Corruption | Is it a style problem evolving, or is it already corruption? |
+| Identifying Superficiality vs. Malice | Negligence at work, or distorted performance outlook? |
+| Seeing Through Appearance to Essence | Was the "donation" truly voluntary, or was power being leveraged? |
+
+**Case facts → Select one or combine → Use this framework as the analytical "skeleton" for the two-factor analysis → State the matched framework at the top of the report**
+
+## ⛔ Analysis Workflow (Main Line: Two-Factor Violation+Accountability · 6 Modules Embedded)
+
 ```
-rg "violation+culpability two-factor analysis" ${WIKI_PATH}/discipline/methodology/
-```
-If default-provider: Read `${SKILL_DIR}/providers/default/knowledge/methodology/Violation+Culpability Two-Factor Analysis Methodology.md`.
-Do NOT analyze until loading is complete.
-
----
-
-## 🔴 v2.0 Dual-Round Adversarial Debate Protocol
-
-> Single-person self-debate is unreliable (DI-20260706-001 lesson: single-person analysis produced the absolutist statement "all sanctions must go through the Party committee meeting").
-> v2.0 introduces a dual-round system: the same Agent runs two rounds; the second round forcibly switches to the defense perspective.
-
-### Round 1: Prosecution Analysis (Prosecution Round)
-Full-process analysis according to methodology v2.2 (6 core modules, see flow below). Produce a complete initial analysis draft.
-
-### Round 2: Defense Challenge (Defense Round)
-**Read one's own Round 1 output**, forcibly switch roles to the defense counsel of the person under review.
-Find **the 3 strongest rebuttal points**, argue each one according to the following matrix:
-
-```
-rebuttal_matrix:
-  - point: "Rebuttal Point 1: _____"
-    strength: "STRONG | MODERATE | WEAK"
-    validity: "VALID — Analysis requires correction | PARTIALLY_VALID — Conclusion needs narrowing | REJECTED — Does not hold"
-    reasoning: "Specific reasons for validity or invalidity (cite regulations + facts)"
-    impact_on_conclusion: "If valid, penalty downgraded to ___ / Does not affect characterization / Only affects penalty magnitude"
-```
-
-**Rebuttal Point Selection Rules:**
-1. Must find the most favorable arguments for the person under review (don't weaken them! Write in the strongest form)
-2. At least one rebuttal point must come from **weak spots in the evidence chain** (M2 weak signal areas)
-3. At least one rebuttal point must come from **sentencing/sanctioning boundaries** (amount near threshold, unclear penalty grade boundaries)
-
-### REBUTTAL_PASS Criteria
-- All 3 rebuttal points fully argued
-- Each rebuttal point has a clear validity determination
-- At least 1 VALID or PARTIALLY_VALID rebuttal point (otherwise, the defense role was not adequately performed; re-run Round 2)
-
----
-
-## ⛔ Analysis Flow (v2.2 6 Core Modules · Mandatory)
-
-**Basic Two Factors**: Six violation items + Five culpability items + Exemption grounds → precise article-citem-subitem correspondence
-
-**Core Module Scheduling**:
-```
-S1→S1a(M6)→S2→S3→S4→S4a(M7)→S5→S7(M2)→S8(M4+M8)→S9→S9a(M9)→S10→S11
+P1[Conceptual Framework] → S1 → S1a(M6) → S2 → S3[📌Cases] → S4(M7) → S5 → S7(M2) → S8(M4+M8) → S9(M9) → S10[📌Cases+P2] → S11
 ```
 
-| Step | Mandatory Check | Methodology Source |
-|------|----------------|--------------------|
-| S1a | M6: Five-layer defense breach → output "explicit failure + latent condition" | §M6 |
-| S4a | M7: Three attribution self-checks (Essentialized? Replace personnel? Situational?) | §M7 |
-| S7 | M2: Signal strength (Strong/Medium/Weak/Pseudo), weak signals require 2+ sources | §M2 |
-| S8 | M4: Accountability positioning + M8: First layer split A/B/C | §M4 §M8 |
-| S9a | M9: Three-item scapegoat audit | §M9 |
+| Step | Mandatory Check | Source |
+|------|----------------|--------|
+| P1 | Conceptual framework match · select one or combine | §P1 |
+| S1a | M6: Five-tier defense breach analysis | §M6 |
+| S4 | M7: Three-step causal attribution self-check | §M7 |
+| S7 | M2: Signal strength · weak signals require 2+ sources | §M2 |
+| S8 | M4: Liability allocation + M8: First-layer breakdown A/B/C | §M4 §M8 |
+| S9 | M9: Three-item scapegoat audit | §M9 |
+| S10 | Qualitative conclusion + sanction recommendation → Append P2 procedural guidance | §P2 |
 
-> M3 (Unintended Consequences) is an optional DI module — invoked when involving complex disposition plans; can be skipped for general cases.
+## 🔴 P2 Procedural Guidance (v2.3 New · Appended After S10)
 
----
+| Rule | Applicable Scenario |
+|------|-------------------|
+| Penalty Matching | Grassroots self-governing personnel not subject to heavy administrative sanctions → supplement with order to resign / suspend subsidies |
+| Four Asset Disposition Types | Confiscation · Recovery · Seizure · Order to Restitute → choose method based on funding source |
+| Four Taboos of Accountability | Blaming subordinates but not superiors · Pursuing speed over accuracy · One-size-fits-all · Holding accountable without providing management support |
+| Retirement ≠ Immunity | Retired persons not subject to administrative sanctions → apply disciplinary action residual clause |
 
-## 🔴 Case Matching (v2.0 New)
+## 🔴 Fixed Requirements
+1. **Applicability Argumentation**: Each cited regulation includes field-specific justification
+2. **Adversarial Argumentation**: `strongest_opposing_view` → `why_rejected` → `residual_uncertainty`
+3. **Lesson Write-back**: New insights discovered → `[LESSON]`
 
-After analysis is complete, construct the current case's `case_profile` and perform rule-based matching against the 11 guiding cases in `references/case-index.json`.
-
-### case_profile Structure
-```json
-{
-  "violation_type": "Discipline of Integrity · Illegally Accepting Gifts",
-  "violation_category": ["Accepting Gifts", "Violating Eight-Point Regulation"],
-  "subject": {"level": "Division Level", "identity": "CCP Member · Civil Servant"},
-  "amount": {"range": "10K-50K"},
-  "mental_state": "Willful",
-  "penalty_severity": "Below Heavy Sanction"
-}
-```
-
-### Matching Rules
-```
-- violation_type exact match → 90% similarity (direct reference)
-- violation_category has 2+ overlaps + subject.level matches → 70% similarity
-- amount.range matches + mental_state matches → 50% similarity
-- Others → mark "No direct precedent case; refer to methodology"
-```
-
-Output matching results (Top 3):
-
-```json
-"case_matches": [
-  {
-    "case_id": "case-001",
-    "case_name": "Private Use of Public Vehicle & Personal Fuel on Public Account",
-    "similarity": "90%",
-    "match_basis": "violation_type match + amount.range match",
-    "key_reference": "Distinguishing 'conduct' from 'corruption' — personal fuel on public account = embezzlement, not a conduct issue"
-  }
-]
-```
-
----
-
-## 🔴 Output Format (v2.0 Structured)
-
+## Output Format
 ```yaml
-Inspection_Analysis_v2.0:
-
-# === Prosecution Analysis (Round 1) ===
-I. Basic Facts: [Person/Facts/Regulations]
-II. Factual Determination:
-    Violation[✅/❌] M6[Breach Level: ___] Culpability[___] Exemption[___]
-    M7 Attribution Bias: [Low/Medium/High] — Self-check conclusion: ___
-III. Enhanced Analysis:
-    M2 Signal Audit: Evidence Reliability [High/Medium/Low] — Weak Signal Items: ___
-    M4 Accountability Positioning: Level[___]
-    M8 Just Culture: First Layer[A/B/C/--]
-IV. Characterization Conclusion: [Disciplinary Characterization] Disposition: [Four Forms Positioning] Sentencing Range: [___ to ___]
-V. Institutional Improvement: [Recommendations based on M6 breach level analysis]
-
-# === Defense Challenge (Round 2) ===
-VI. Adversarial Debate Matrix:
-    Rebuttal Point 1: [___] Strength:[Strong/Medium/Weak] Validity:[Valid/Partially Valid/Rejected] Reasoning:[___]
-    Rebuttal Point 2: [___] Strength:[Strong/Medium/Weak] Validity:[Valid/Partially Valid/Rejected] Reasoning:[___]
-    Rebuttal Point 3: [___] Strength:[Strong/Medium/Weak] Validity:[Valid/Partially Valid/Rejected] Reasoning:[___]
-    Conclusion Correction: [Whether Round 1 conclusion needs correction · Content of correction]
-
-# === Case Reference ===
-VII. Case Matching:
-    Top1: [Case Name] Similarity:[___%] Reference Point:[___]
-    Top2: [Case Name] Similarity:[___%] Reference Point:[___]
-    Top3: [Case Name] Similarity:[___%] Reference Point:[___]
+review_analysis_v2.3:
+P1_conceptual_framework: [Three Distinctions/From Style to Corruption/Superficiality vs. Malice/Seeing Through Appearance to Essence]
+1_basic_facts: [Party/Person/Facts/Regulations]
+2_fact_finding: Violation[✅/❌] M6[breach_layer] M7[bias] Accountability[...] Exemption[...]
+3_case_comparison: S3_use_similar_cases S10_use_direct_precedent
+4_adversarial_argumentation: counter_case strongest_opposing_view/why_rejected/residual_uncertainty
+5_enhanced_analysis: M2[reliability] M4[Layer_X] M8[A/B/C/--]
+6_conclusion: M9[risk] Qualitative:[...] Disposition:[...]
+7_P2_procedural_guidance: [Penalty_Matching/Asset_Disposition/Four_Taboos/Retirement_Rules]
+8_institutional_improvement: [Recommendations]
 ```
 
----
-
-## Output Rules
-Write file to `memory/inspection-drafts/{task_id}/agent3-analyze.json`
-Final reply is a single line: `DONE <output file path> + Case match TOP1 + Adversarial debate correction Y/N`
-
-**Version History:** v2.0 — Dual-Round Adversarial Debate Protocol (Round 1 Prosecution + Round 2 Defense) + Structured case matching (case-index.json rule matching).
+## Output Rule
+Write the result file to `memory/inspection-drafts/{task_id}/agent3-analyze.json`
+Final reply is a single line: `DONE <output file path>`

@@ -1,4 +1,4 @@
-# Agent 4: Draft (Report Writing · v2.0) — DisciplineInspection
+# Agent 4: Draft (Report Writing · v2.1) — DisciplineInspection
 
 ## Task
 Based on agent3-analyze.json (v2.0 format: containing dual-round adversarial debate + case matching), write a formal discipline inspection report.

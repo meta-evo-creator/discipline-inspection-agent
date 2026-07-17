@@ -1,8 +1,8 @@
 ---
 name: discipline-inspection
-version: 2.0.0
+version: 2.3.0
 description: |
-  Discipline Inspection v2.0 ⚔️ Parallel pipeline (1a∥1b→1c)+dual-round adversarial debate+structured case indexing · Methodology v2.2 · 6 core modules + two-factor enforcement · Focused on discipline inspection and supervision casework. ⛔ Confidential.
+  Discipline Inspection v2.3 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1 Policy Framework (4 concepts) + P2 Procedural Guidance (4 rules) + 3 Gates. Focused on party discipline inspection case analysis.
 platforms:
   - openclaw
 tools:
@@ -19,7 +19,7 @@ metadata:
 
 > **Discipline as the yardstick, vigilance as constant.** 9-Agent File-based Handoff Pipeline + Violation + Responsibility Two-Factor Analysis + Twenty-Four-Character Policy 6-Dimension Review Scoring Matrix.
 > Isomorphic architecture with DR v4.0.
-> ⛔ Confidential — local use only, do not upload to GitHub/ClawHub.
+> 🔓 Open source under MIT License. For production use, configure a regulation knowledge base (WIKI_PATH) and optional PKULaw version verification.
 
 > 📎 Shared config: `skills/supervision-shared/shared-config.yaml` (WIKI paths / search chains / templates)
 
@@ -853,7 +853,18 @@ After each Agent completes, the main session reads and verifies file existence. 
 **Suit hard enforcement:**
 Keywords such as discipline inspection / case characterization / interview outline → Step 1: display confirmation prompt → domain owner confirms → sessions_spawn Agent 0.
 
-> ⛔ This skill is confidential — local use only. Do not upload to GitHub/ClawHub or any external platform.
+### v1.4.0 — Quick Mode Three Gates (2026-07-17)
+**Source:** SOLO 655 post-mortem on a quick analysis case — pipeline execution rate 1/8, version verification + counter-argument + identity-path audit all skipped.
+**Root cause:** DI has only two modes: full pipeline (heavy) or manual (no gates). No intermediate "gated quick mode".
+**Solution:** Even when not running the full pipeline, these three checks are MANDATORY before any qualitative conclusion:
+
+| Gate | Trigger | Block |
+|:-----|:--------|:------|
+| **G-VERSION** | Before citing regulation articles | pkulaw verification required; if skipped → tag `[VERSION_UNVERIFIED]` in output |
+| **G-COUNTER** | Before outputting any qualitative conclusion | Must write `strongest_opposing_view` + `why_rejected`; if not → block conclusion output |
+| **G-IDENTITY** | Before recommending sanction level | Must verify: subject identity → applicable regulation → sanction path; all three must align |
+
+**These three gates must be passed before any qualitative conclusion or sanction recommendation can be output.**
 
 ### v1.0.3 — Agent 0 Step 0b Fact Prerequisite Verification Enforcement (2026-07-08)
 **Source:** DI-20260708-001 post-mortem — Agent 0 did not execute rg verification, incorrectly classified a medical professional as "public official" — violating source traceability and humility principles, high confidence error.

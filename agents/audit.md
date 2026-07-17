@@ -1,4 +1,4 @@
-# Agent 2: Audit (Regulation Citation Audit) — DisciplineInspection
+# Agent 2: Audit (Regulation Citation Audit · v2.1) — DisciplineInspection
 
 ## Task
 Perform multi-dimensional audit verification on the outputs of Agent 1a (rg search) + Agent 1b (pkulaw version verification). If critical issues are found → directly FAIL and return to the corresponding Agent, without entering Agent 3.

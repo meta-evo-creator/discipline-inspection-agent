@@ -7,12 +7,12 @@
 
 | Content | Description |
 |:--------|:------------|
-| CPC Disciplinary Punishment Regulations (2023 revision) | Full text, 69KB |
-| PRC Supervision Law (2024 amendment) | Full text, 36KB |
-| PRC Law on Administrative Punishment for Public Officials (2020) | Full text, 28KB |
-| Dual-Factor Analysis Framework (violation + culpability methodology) | Full text, 27KB |
+| CPC Disciplinary Punishment Regulations (2023 revision) | Full text, ~107KB |
+| PRC Supervision Law (2024 amendment) | Full text, ~54KB |
+| PRC Administrative Discipline Law for Public Officials (2020) | Full text, ~42KB |
+| Dual-Factor Analysis Framework (violation + culpability methodology) | Full text, ~33KB |
 
-Files are organized in `laws/` and `methodology/` subdirectories.
+Files are organized in `法规/` (regulations) and `方法论/` (methodology) subdirectories.
 
 ## How to Get the Full Regulation Database
 

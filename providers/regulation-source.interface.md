@@ -1,96 +1,96 @@
 # Regulation Source Interface v1.0
 
-> **知识源可插拔接口规范** — DI技能管线通过此接口与法规数据层解耦。
-> 任何实现本接口的 Provider 都可以驱动 DI 管线。
+> **Pluggable Knowledge Source Interface Specification** — The DI skill pipeline decouples from the regulation data layer through this interface.
+> Any Provider implementing this interface can drive the DI pipeline.
 
 ---
 
-## 接口定义
+## Interface Definition
 
-每个 Provider 通过 `provider.yaml` 声明自身能力和配置：
+Each Provider declares its capabilities and configuration via `provider.yaml`:
 
 ```yaml
 name: "provider-name"
 version: "1.0"
-description: "简要描述"
+description: "Brief description"
 
 capabilities:
-  regulation_search: true|false      # 是否支持法规全文检索
-  version_verification: true|false   # 是否支持法规版本/时效性验证
-  case_search: true|false            # 是否支持指导性案例检索
-  methodology_access: true|false     # 是否支持方法论文档访问
+  regulation_search: true|false           # Supports full-text regulation search
+  version_verification: true|false        # Supports regulation version/timeliness verification
+  case_search: true|false                 # Supports guiding case retrieval
+  methodology_access: true|false          # Supports methodology document access
 
 degradation:
   missing_version_verification: "VERSION_UNVERIFIED | BLOCK | SKIP"
   missing_regulation_search: "BLOCK | USE_DEFAULT"
-  note: "当某能力缺失时的降级行为说明"
+  note: "Describes degradation behavior when a capability is missing"
 
 search:
   engine: "ripgrep | pkulaw-mcp | custom"
-  base_path: "${VARIABLE}"           # 环境变量，agent 解析时替换
-  script: "path/to/script.py"        # (可选) CLI 脚本路径
-  scopes:                            # 搜索域映射
-    discipline_laws: "${BASE}/法规"
+  base_path: "${VARIABLE}"               # Environment variable, resolved by the agent at parse time
+  script: "path/to/script.py"            # (Optional) CLI script path
+  scopes:                                # Search scope mapping
+    discipline_laws: "${BASE}/discipline-laws"
     medical_laws: "${BASE}/medical"
-    cases: "${BASE}/指导性案例"
-    methodology: "${BASE}/方法论"
+    cases: "${BASE}/guiding-cases"
+    methodology: "${BASE}/methodology"
 ```
 
 ---
 
-## 能力矩阵
+## Capability Matrix
 
-| 能力 | Agent 消费者 | 缺失时管线行为 |
-|:-----|:------------|:--------------|
-| `regulation_search` | Agent 1a (search-rg) | 若 `USE_DEFAULT` → 回退到 default-provider；若 `BLOCK` → 管线拒绝启动 |
-| `version_verification` | Agent 1b (search-pkulaw) | 所有法规标记 `VERSION_UNVERIFIED`，Agent 2/3 附加 ⚠️ 警告 |
-| `case_search` | Agent 1a | 该项跳过，不阻断管线 |
-| `methodology_access` | Agent 1a / Agent 3 | 降级：从 SKILL.md 内嵌方法论引用 |
+| Capability | Agent Consumer | Pipeline Behavior When Missing |
+|:-----------|:---------------|:-------------------------------|
+| `regulation_search` | Agent 1a (search-rg) | If `USE_DEFAULT` → falls back to default-provider; if `BLOCK` → pipeline refuses to start |
+| `version_verification` | Agent 1b (search-pkulaw) | All regulations marked `VERSION_UNVERIFIED`, Agents 2/3 attach ⚠️ warnings |
+| `case_search` | Agent 1a | Skipped, pipeline not blocked |
+| `methodology_access` | Agent 1a / Agent 3 | Degraded: uses methodology references embedded in SKILL.md |
 
 ---
 
-## Provider 选择逻辑
+## Provider Selection Logic
 
-管线启动时，主会话（或 Agent 0）按以下优先级选择 Provider：
+At pipeline startup, the main session (or Agent 0) selects a Provider using the following priority:
 
 ```
-1. 环境变量 DI_REGULATION_PROVIDER 指定 → 使用指定 provider
-2. 检测 WIKI_PATH 环境变量存在 + wiki 目录可读 → 使用 wiki-provider
-3. 检测 pkulaw-mcp 可用 → 叠加启用 pkulaw-provider（版本验证增强）
-4. 以上均不可用 → 使用 default-provider（内置示例法规包）
+1. Environment variable DI_REGULATION_PROVIDER specified → use designated provider
+2. WIKI_PATH env var exists + wiki directory readable → use wiki-provider
+3. pkulaw-mcp detected as available → layer on pkulaw-provider (version verification enhancement)
+4. None of the above → use default-provider (built-in sample regulation pack)
 ```
 
-Provider 之间可以**叠加**：
-- `wiki-provider` 提供法规检索（Agent 1a）
-- `pkulaw-provider` 提供版本验证（Agent 1b）
-- 两者独立配置，互不依赖
+Providers can be **stacked**:
+- `wiki-provider` provides regulation search (Agent 1a)
+- `pkulaw-provider` provides version verification (Agent 1b)
+- Both are configured independently, with no mutual dependency
 
 ---
 
-## 内置 Provider 清单
+## Built-in Provider List
 
-| Provider | 能力 | 适用场景 |
-|:---------|:-----|:---------|
-| **default-provider** | 法规检索（3部核心法规）+ 方法论 | 开源用户开箱即用 / demo |
-| **wiki-provider** | 法规全文检索 + 案例检索（45+部法规） | 有本地WIKI法规库的机构 |
-| **pkulaw-provider** | 法规版本验证（现行有效/已修改/废止） | 有北大法宝订阅的机构 |
-
----
-
-## 自定义 Provider
-
-用户可以创建自己的 Provider：
-1. 在 `providers/` 下新建目录
-2. 编写 `provider.yaml`（按上述接口）
-3. 设置环境变量 `DI_REGULATION_PROVIDER=your-provider-name`
-4. 管线启动时自动加载
+| Provider | Capability | Use Case |
+|:---------|:-----------|:---------|
+| **default-provider** | Regulation search (3 core regulations) + methodology | Out-of-the-box for open-source users / demo |
+| **wiki-provider** | Full-text regulation search + case search (45+ regulations) | Institutions with a local WIKI regulation database |
+| **pkulaw-provider** | Regulation version verification (currently effective/amended/abolished) | Institutions with a PKULaw subscription |
 
 ---
 
-## 环境变量
+## Custom Providers
 
-| 变量 | 说明 | 默认值 |
-|:-----|:-----|:-------|
-| `DI_REGULATION_PROVIDER` | 指定 provider 名称 | auto-detect |
-| `WIKI_PATH` | WIKI法规库根路径 | (无) |
-| `SKILL_DIR` | DI技能目录 | 自动检测 |
+Users can create their own Provider:
+1. Create a new directory under `providers/`
+2. Write a `provider.yaml` (following the interface above)
+3. Set the environment variable `DI_REGULATION_PROVIDER=your-provider-name`
+4. The pipeline loads it automatically at startup
+
+---
+
+## Environment Variables
+
+| Variable | Description | Default |
+|:---------|:------------|:--------|
+| `DI_REGULATION_PROVIDER` | Specifies the provider name | auto-detect |
+| `WIKI_PATH` | Root path of the WIKI regulation database | (none) |
+| `SKILL_DIR` | DI skill directory | auto-detected |

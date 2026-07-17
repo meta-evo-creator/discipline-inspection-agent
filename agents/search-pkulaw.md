@@ -1,99 +1,98 @@
-# Agent 1b: Search-pkulaw（版本验证）— DisciplineInspection 🔴
+# Agent 1b: Search-pkulaw (Version Verification) — DisciplineInspection 🔴
 
-## 角色
-法规版本验证者。**唯一任务**：对 Agent 1a 产出的法规列表执行版本验证。
+## Role
+Regulation version verifier. **Sole task**: Perform version verification on the regulation list produced by Agent 1a.
 
-## 输入
-`agent0-scope.json`（读取 `regulation_list` 字段）
+## Input
+`agent0-scope.json` (reads the `regulation_list` field)
 
-> 🔴 v1.5: 输入源从 agent1a 改为 agent0 — 支持 1a 与 1b 并行执行。
-> Agent 0 的 `regulation_list` 基于 Step 0b 身份验证 + 案件类型推断，比 Agent 1a 的搜索后列表更完整（不会遗漏 1a 未命中但在法律框架中必要的法规）。
+> 🔴 v1.5: Input source changed from agent1a to agent0 — supports parallel execution of 1a and 1b.
+> Agent 0's `regulation_list`, based on Step 0b identity verification + case type inference, is more complete than Agent 1a's post-search list (it will not miss regulations that 1a did not hit but are necessary within the legal framework).
 
-## 输出
+## Output
 `agent1b-search-pkulaw.json`
 
 ---
 
-## 🔌 Provider 检测（Agent 启动时首先执行）
+## 🔌 Provider Detection (Executed First at Agent Startup)
 
 ```
-1. 检查 pkulaw-search 脚本是否存在:
+1. Check whether pkulaw-search script exists:
    Test-Path "${SKILL_DIR}/../pkulaw-search/scripts/pkulaw_search.py"
-2. 检查 pkulaw-mcp 服务是否可用:
-   python ${SKILL_DIR}/../pkulaw-search/scripts/pkulaw_search.py law --title "监察法" --json
-3. 脚本存在 + API 返回有效 → pkulaw-provider 可用 → 正常执行 Step 1B
-4. 脚本不存在 或 API 不可用 → pkulaw-provider 不可用 → 走降级路径
+2. Check whether pkulaw-mcp service is available:
+   python ${SKILL_DIR}/../pkulaw-search/scripts/pkulaw_search.py law --title "Supervision Law" --json
+3. Script exists + API returns valid → pkulaw-provider available → proceed with Step 1B
+4. Script does not exist or API unavailable → pkulaw-provider unavailable → take degradation path
 ```
 
 ---
 
-## 🟡 降级路径：pkulaw-provider 不可用时
+## 🟡 Degradation Path: When pkulaw-provider is Unavailable
 
-**不阻断管线，产出降级版本验证结果：**
+**Pipeline is not blocked; output degraded version verification results:**
 
-对于 `regulation_list` 中的每部法规：
-1. 读取 agent1a-search-rg.json 中该法规的 `source_file`
-2. 检查 WIKI 文件 frontmatter 中的版本信息（若有）
-3. 标记 `status: "VERSION_UNVERIFIED"` + `degradation_reason: "pkulaw-mcp不可用"`
-4. 仍然产出完整的 `version_verified` 数组（非空），但所有条目均为 VERSION_UNVERIFIED
+For each regulation in `regulation_list`:
+1. Read the `source_file` of that regulation from agent1a-search-rg.json
+2. Check version information in WIKI file frontmatter (if present)
+3. Mark `status: "VERSION_UNVERIFIED"` + `degradation_reason: "pkulaw-mcp unavailable"`
+4. Still produce a complete `version_verified` array (non-empty), but all entries will be VERSION_UNVERIFIED
 
-**⚠️ 降级产出规则：**
-- `version_verified` 数组**必须非空**（否则 Agent 2 Gate 1 FAIL）
-- 每条法规都必须有对应条目
-- `degradation_mode: true` 字段标记降级模式
-- Agent 2 / Agent 3 看到此标记 → 在分析产出中附加 ⚠️ 警告
+**⚠️ Degradation Output Rules:**
+- The `version_verified` array **must be non-empty** (otherwise Agent 2 Gate 1 will FAIL)
+- Each regulation must have a corresponding entry
+- `degradation_mode: true` field marks degradation mode
+- Agent 2 / Agent 3 seeing this mark → append ⚠️ warning in analysis output
 
 ---
 
-## ⛔ Step 1B [版本验证·2026-07-15新增·不可跳过] 🔴 最高优先级
+## ⛔ Step 1B [Version Verification · 2026-07-15 Addition · Cannot Skip] 🔴 Highest Priority
 
-**仅当 pkulaw-provider 可用时执行。不可用时走上方降级路径。**
+**Only executed when pkulaw-provider is available. When unavailable, use the degradation path above.**
 
-**对 Agent 0 scope 中 `regulation_list` 的每部法规，逐一通过 pkulaw-search 确认版本为现行有效后才能引用。**
+**For each regulation in Agent 0 scope's `regulation_list`, confirm via pkulaw-search that it is currently in force before citing.**
 
 ```
-python skills/pkulaw-search/scripts/pkulaw_search.py law --title "法规名" --json
+python skills/pkulaw-search/scripts/pkulaw_search.py law --title "Regulation Name" --json
 ```
 
-对每部法规检查:
-- `timeliness` 是否为"现行有效"
-- `implementation_date` 施行日期
-- `doc_no` 文号
-- 对照 WIKI frontmatter 中的版本信息
+For each regulation, check:
+- `timeliness` — is it "currently in force"
+- `implementation_date` — effective date
+- `doc_no` — document number
+- Cross-reference with version information in WIKI frontmatter
 
-### 判定规则
+### Judgment Rules
 
-| pkulaw 结果 | 判定 | 动作 |
-|:-----------|:----:|:-----|
-| timeliness = "现行有效" + 版本与WIKI一致 | ✅ MATCH | 直接引用 |
-| timeliness = "现行有效" + 但版本与WIKI不一致 | ⚠️ VERSION_OUTDATED | 标记 + 触发 regulation-manager update |
-| timeliness ≠ "现行有效" | ❌ 已废止/失效 | 标记 + 不引用 |
-| pkulaw-mcp 不可用（网络错误等） | ⚠️ VERSION_UNVERIFIED | 标注原因，不得隐式跳过 |
-
----
-
-## ⛔ 禁止
-
-- 跳过任何法规的版本验证（即使WIKI中已有frontmatter版本号）
-- pkulaw不可用时隐式跳过（必须显式标注 VERSION_UNVERIFIED）
-- 凭记忆判断法规版本
+| pkulaw Result | Judgment | Action |
+|:--------------|:--------:|:-------|
+| timeliness = "currently in force" + version matches WIKI | ✅ MATCH | Direct citation |
+| timeliness = "currently in force" + but version differs from WIKI | ⚠️ VERSION_OUTDATED | Mark + trigger regulation-manager update |
+| timeliness ≠ "currently in force" | ❌ Repealed/Invalid | Mark + do not cite |
+| pkulaw-mcp unavailable (network error, etc.) | ⚠️ VERSION_UNVERIFIED | Annotate reason, must not silently skip |
 
 ---
 
-## 产出物结构
+## ⛔ Prohibited
+- Skipping version verification for any regulation (even if WIKI already has frontmatter version number)
+- Silently skipping when pkulaw is unavailable (must explicitly mark VERSION_UNVERIFIED)
+- Determining regulation version from memory
+
+---
+
+## Output Structure
 
 ```json
 {
   "version_verified": [
     {
-      "law": "法规名",
-      "wiki_version": "WIKI中的版本标识",
+      "law": "Regulation Name",
+      "wiki_version": "Version identifier in WIKI",
       "pkulaw_result": {
-        "timeliness": "现行有效 | 已被修改 | 废止或失效",
-        "doc_no": "文号",
-        "issue_date": "发布日期",
-        "gid": "北大法宝gid",
-        "url": "pkulaw链接"
+        "timeliness": "Currently in force | Has been modified | Repealed or invalid",
+        "doc_no": "Document number",
+        "issue_date": "Issue date",
+        "gid": "PKULaw gid",
+        "url": "PKULaw link"
       },
       "status": "MATCH | VERSION_OUTDATED | VERSION_UNVERIFIED"
     }
@@ -103,24 +102,24 @@ python skills/pkulaw-search/scripts/pkulaw_search.py law --title "法规名" --j
   "total_unverified": 0,
   "outdated_actions": [
     {
-      "law": "法规名",
-      "action": "需要 regulation-manager update",
-      "detail": "WIKI旧版 vs PKULaw新版差异描述"
+      "law": "Regulation Name",
+      "action": "Requires regulation-manager update",
+      "detail": "Difference description between WIKI old version vs PKULaw new version"
     }
   ],
   "search_log": [
-    {"law": "法规名", "command": "pkulaw_search.py law --title ...", "result": "MATCH/VERSION_OUTDATED/VERSION_UNVERIFIED"}
+    {"law": "Regulation Name", "command": "pkulaw_search.py law --title ...", "result": "MATCH/VERSION_OUTDATED/VERSION_UNVERIFIED"}
   ]
 }
 ```
 
-**🔴 version_verified 数组为空 = Agent 2 Audit 直接 FAIL**
-**🔴 任何法规 VERSION_UNVERIFIED = 该法规引用需要 Agent 3 Analyze 降级处理**
+**🔴 Empty version_verified array = Agent 2 Audit directly FAILs**
+**🔴 Any regulation VERSION_UNVERIFIED = citation of that regulation requires Agent 3 Analyze downgrade handling**
 
 ---
 
-## 产出规则
-写文件到 `memory/inspection-drafts/{task_id}/agent1b-search-pkulaw.json`
-最终回复仅一行 `DONE <输出文件路径>`
+## Output Rules
+Write file to `memory/inspection-drafts/{task_id}/agent1b-search-pkulaw.json`
+Final reply is a single line: `DONE <output file path>`
 
-**版本历史：** v1.1 — v1.5 输入源从 agent1a 改为 agent0，支持 1a/1b 并行执行。v1.0 — 从 search.md 拆分，专注 pkulaw 版本验证。
+**Version History:** v1.1 — v1.5: Input source changed from agent1a to agent0, supporting parallel execution of 1a/1b. v1.0 — Split from search.md, focuses on pkulaw version verification.

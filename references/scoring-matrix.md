@@ -1,30 +1,30 @@
-# 二十四字方针6维评分矩阵 — DisciplineInspection
+# 24-Character Guideline 6-Dimension Scoring Matrix — DisciplineInspection
 
-## 六维权重
+## Six Dimensions & Weights
 
-| # | 维度 | 权重 | 角色 |
-|:-:|:-----|:----:|:-----|
-| 1 | 定性准确 | 25% | 核心 |
-| 2 | 事实清楚 | 20% | 前提 |
-| 3 | 证据确凿 | 20% | 支撑 |
-| 4 | 处理恰当 | 15% | 输出 |
-| 5 | 手续完备 | 10% | 保障 |
-| 6 | 程序合规 | 10% | 底线 |
-| **合计** | | **100%** | |
+| # | Dimension | Weight | Role |
+|:-:|:----------|:------:|:-----|
+| 1 | Accurate characterization | 25% | Core |
+| 2 | Clear facts | 20% | Foundation |
+| 3 | Solid evidence | 20% | Support |
+| 4 | Appropriate disposition | 15% | Output |
+| 5 | Complete procedures | 10% | Guarantee |
+| 6 | Compliant process | 10% | Baseline |
+| **Total** | | **100%** | |
 
-## 逻辑链
-事实清楚(前提) → 证据确凿(支撑) → 定性准确(核心) → 处理恰当(输出) → 手续完备(保障) → 程序合规(底线)
+## Logical Chain
+Clear facts (foundation) → Solid evidence (support) → Accurate characterization (core) → Appropriate disposition (output) → Complete procedures (guarantee) → Compliant process (baseline)
 
-## 评分标准
-- ≥80: PASS | 60-79: REVISE | <60: REJECT
+## Scoring Criteria
+- >= 80: PASS | 60-79: REVISE | < 60: REJECT
 
-## 降档规则
-- 定性准确<50 → 强制REVISE（无论总分）
-- 事实清楚<40 → 强制REVISE
-- 证据确凿<40 → 强制REVISE
+## Downgrade Rules
+- Accurate characterization < 50 → Mandatory REVISE (regardless of total score)
+- Clear facts < 40 → Mandatory REVISE
+- Solid evidence < 40 → Mandatory REVISE
 
-## 权重设计原则
-- 前三者(定性+事实+证据)=65% — 根基维度，一票降档
-- 处理恰当=15% — 产品价值
-- 后二者(手续+程序)=20% — 程序保障
-- 纪检场景最高权重给定性准确（法规准确性优先）
+## Weight Design Principles
+- Top three (characterization + facts + evidence) = 65% — Foundational dimensions, single-dimension downgrade trigger
+- Appropriate disposition = 15% — Product value
+- Bottom two (procedures + process) = 20% — Procedural safeguards
+- In discipline inspection contexts, the highest weight goes to accurate characterization (regulation accuracy prioritized)

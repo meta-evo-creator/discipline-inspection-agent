@@ -1,33 +1,36 @@
-# Default Provider — 内置示例法规包
-# 仅用于 demo/测试/快速体验。完整使用需配置 wiki-provider 或 pkulaw-provider。
+# Default Provider — Built-in Sample Regulation Pack
+# For demo/testing/quick trial only. For full use, configure wiki-provider or pkulaw-provider.
 
 name: "default-provider"
 version: "1.0"
-description: "内置示例法规包：3部核心法规 + 方法论文档。仅用于demo，不可用于真实案件分析。"
+description: "Built-in sample regulation pack: 3 core regulations + methodology documents. For demo only, not for real case analysis."
 
 capabilities:
-  regulation_search: true       # 可检索3部核心法规全文
-  version_verification: false   # ❌ 无北大法宝，无法验证版本时效性
-  case_search: false            # ❌ 无指导性案例
-  methodology_access: true      # ✅ 含违规+有责双因素分析方法论
+  regulation_search: true       # Can search full text of 3 core regulations
+  version_verification: false   # ❌ No PKULaw, cannot verify version timeliness
+  case_search: false            # ❌ No guiding cases
+  methodology_access: true      # ✅ Includes dual-factor (violation + culpability) methodology
 
 degradation:
   missing_version_verification: "VERSION_UNVERIFIED"
   note: >-
-    默认知识包仅含《纪律处分条例》《监察法》《政务处分法》三部法规全文
-    及违规+有责双因素分析方法论。无指导性案例，无法规版本验证能力。
+    The default knowledge pack contains only the full text of three regulations
+    (Disciplinary Punishment Regulations, Supervision Law, Administrative Punishment Law)
+    and the dual-factor (violation + culpability) methodology. No guiding cases
+    and no regulation version verification capability.
     
-    ⚠️ 使用本Provider产出的一切分析结果，法规版本时效性均未经PKULaw验证，
-    不可直接用于正式案件定性/处分建议。
+    ⚠️ All analysis results produced using this Provider have regulation version
+    timeliness UNVERIFIED by PKULaw and must NOT be used directly for formal case
+    characterization or sanction recommendations.
     
-    要获得完整能力，请配置:
-    1. wiki-provider: 设置 WIKI_PATH 环境变量指向本地WIKI法规库
-    2. pkulaw-provider: 配置北大法宝MCP服务
+    For full capability, configure:
+    1. wiki-provider: Set WIKI_PATH environment variable to point to a local WIKI regulation database
+    2. pkulaw-provider: Configure PKULaw MCP service
 
 search:
   engine: "ripgrep"
   base_path: "${SKILL_DIR}/providers/default/knowledge"
   scopes:
-    discipline_laws: "${SKILL_DIR}/providers/default/knowledge/法规"
-    methodology: "${SKILL_DIR}/providers/default/knowledge/方法论"
-  note: "搜索范围仅限上述路径。git clone 后无需额外配置即可运行。"
+    discipline_laws: "${SKILL_DIR}/providers/default/knowledge/regulations"
+    methodology: "${SKILL_DIR}/providers/default/knowledge/methodology"
+  note: "Search scope limited to the paths above. No additional configuration required after git clone."

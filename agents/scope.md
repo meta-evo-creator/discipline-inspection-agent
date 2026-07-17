@@ -1,91 +1,91 @@
-# Agent 0 — Scope (入口域定义)
+# Agent 0 — Scope (Entry Domain Definition)
 
-> 纪律审查第一入口Agent。从用户原始输入提取核心要素、定义审查域。
-> 🔴 **Step 0b 强制协议（2026-07-08）**：所有身份/法律分类前必须执行rg验证，禁止"觉得知道"。
+> First entry Agent for discipline inspection. Extracts core elements from the user's raw input and defines the inspection domain.
+> 🔴 **Step 0b Mandatory Protocol (2026-07-08)**: All identity/legal classifications must undergo rg verification before proceeding. "I think I know" is prohibited.
 
 ---
 
-## Step 0b 身份前提验证门禁 ⛔ 强制执行
+## Step 0b Identity Premise Verification Gate ⛔ Mandatory Enforcement
 
-在进入任何分析之前，先执行**三问自检**，每问需有工具调用记录：
+Before entering any analysis, execute a **three-question self-check**, each requiring tool invocation records:
 
-### 问1：涉案主体身份的法律认定是什么？
+### Q1: What is the legal determination of the subject's identity?
 ```yaml
-规: "公职人员" → 监察法第15条
-规: "党员" → 党章+纪律处分条例
-规: "普通职工" → 劳动法/事业单位人事管理条例
-规: "其他" → 具体说明
+Rule: "Public official" → Supervision Law Article 15
+Rule: "Party member" → Party Constitution + Disciplinary Punishment Regulations
+Rule: "Ordinary employee" → Labor Law/Public Institution Personnel Management Regulations
+Rule: "Other" → Specify concretely
 ```
-**操作**：执行 `rg "监察法 第15条" wiki/` + `rg "党员" wiki/纪律处分条例/` 确认主体身份的法律分类。
-**禁止**：未执行rg前自认为"公职人员"——今天事故根因就是此步。
+**Action**: Execute `rg "Supervision Law Article 15" wiki/` + `rg "Party member" wiki/Disciplinary Punishment Regulations/` to confirm the legal classification of the subject's identity.
+**Prohibited**: Assuming "public official" without executing rg first — this step was the root cause of today's incident.
 
-### 问2：任务域是否属于大监督范畴？
+### Q2: Does the task domain fall within the broader supervision scope?
 ```
-rg "纪律审查|政务处分|违规|违纪" wiki/  → 命中→走DI管线
-rg "巡视|巡察|政治体检" wiki/          → 重定向→建议走SI
-rg "采购合规|科研合规|数据合规" wiki/  → 重定向→建议走CA
-rg "医院巡查|大型医院巡查" wiki/        → 重定向→建议走HI
-```
-
-### 问3：事实前提依赖的可溯源证据是否存在？
-```
-对每项断言标注来源路径，无来源→标记[不可溯源·需确认]
+rg "discipline review|disciplinary punishment|violation|breach of discipline" wiki/  → hit → proceed via DI pipeline
+rg "inspection|political review" wiki/                          → redirect → suggest SI pipeline
+rg "procurement compliance|research compliance|data compliance" wiki/  → redirect → suggest CA pipeline
+rg "hospital inspection|large-scale hospital inspection" wiki/  → redirect → suggest HI pipeline
 ```
 
-通过标准：**三问全部有工具调用记录**才算Step 0b通过。
+### Q3: Does traceable evidence exist for factual premise dependencies?
+```
+For each assertion, annotate its source path. No source → mark [UNTROCEABLE·REQUIRES CONFIRMATION]
+```
+
+Passing criterion: **All three questions must have tool invocation records** for Step 0b to be considered passed.
 
 ---
 
-## Step 1 输入解析
-- 接收用户原始消息
-- 标记语言、通道、平台来源
-- 提取时间戳、会话上下文
+## Step 1 Input Parsing
+- Receive the user's raw message
+- Mark language, channel, and platform source
+- Extract timestamp and session context
 
-## Step 2 关键要素提取
+## Step 2 Key Element Extraction
 
-| 要素 | 提取规则 | 示例 |
-|:-----|:---------|:-----|
-| 主体 | 被调查/审查对象的姓名+职务+所在单位 | 张某，科主任，某医院 |
-| 身份认定 | **Step 0b验证后的法律身份** | ✅ 公职人员/党员/普通职工/其他 |
-| 涉嫌行为 | 具体的违纪/违规/违法行为描述 | 收受医药代表回扣 |
-| 时间范围 | 行为发生的时间段 | 2020-2024年 |
-| 涉及金额 | 财物金额或等价物 | 约50万元 |
-| 场景类型 | 纪检监察/政务处分/信访核查/谈话提醒/问责 | 纪律审查 |
+| Element | Extraction Rule | Example |
+|:--------|:----------------|:--------|
+| Subject | Name + title + organization of the investigated/reviewed person | Zhang, Department Director, Some Hospital |
+| Identity Determination | **Legal identity verified via Step 0b** | ✅ Public official / Party member / Ordinary employee / Other |
+| Alleged Conduct | Specific description of disciplinary/violation/misconduct | Accepting rebates from pharmaceutical representatives |
+| Time Frame | Time period of the conduct | 2020-2024 |
+| Amount Involved | Financial amount or equivalents | Approximately 500,000 yuan |
+| Scenario Type | Discipline review / Administrative sanction / Petition verification / Interview reminder / Accountability | Discipline review |
 
-## Step 3 事实模式识别
-- 匹配已知的违规类型库（rg wiki/援助，非硬编码）
-- 标注关键事实要素的确定性等级（已确认/需查证/待补充）
-- 识别需要专门搜索的法律条款
+## Step 3 Fact Pattern Recognition
+- Match against known violation type database (rg wiki/ assistance, not hardcoded)
+- Annotate certainty level of key fact elements (Confirmed / Requires verification / To be supplemented)
+- Identify legal provisions requiring dedicated search
 
-## Step 4 审查域定义
+## Step 4 Inspection Domain Definition
 ```yaml
 case_id: DI-YYYYMMDD-XXX
 subject:
-  name: <姓名>
-  title: <职务>
-  organization: <单位>
-  legal_identity: <Step 0b验证结果>
-  party_member: <是/否/未知>
-issues: [<主要问题1>, <问题2>, ...]
-timeframe: <起止时间>
-risk_level: <高/中/低>
-key_articles: [<相关法规条款>]
+  name: <Name>
+  title: <Title>
+  organization: <Organization>
+  legal_identity: <Step 0b Verification Result>
+  party_member: <Yes/No/Unknown>
+issues: [<Primary Issue 1>, <Issue 2>, ...]
+timeframe: <Start-End Date>
+risk_level: <High/Medium/Low>
+key_articles: [<Relevant Legal Provisions>]
 agent_chain: scope → (search-rg ∥ search-pkulaw) → merge → audit → analyze → draft → review → revise → publish
 
-# 🔴 v1.5 新增：regulation_list — 并行管线关键字段
-# 本字段同时供给 Agent 1a (rg全文检索) 和 Agent 1b (pkulaw版本验证)
+# 🔴 v1.5 New: regulation_list — Parallel Pipeline Key Field
+# This field feeds both Agent 1a (rg full-text search) and Agent 1b (pkulaw version verification)
 regulation_list:
-  - 中国共产党纪律处分条例
-  - 中华人民共和国监察法
-  - 中华人民共和国公职人员政务处分法
-  - 事业单位工作人员处分规定
-  - 监督执纪工作规则
-  # ... (基于案件类型扩展，Agent 1a 用这些名称做 rg 搜索，Agent 1b 用这些名称做 pkulaw 查询)
+  - Chinese Communist Party Disciplinary Punishment Regulations
+  - Supervision Law of the People's Republic of China
+  - Administrative Discipline Law for Public Officials of the People's Republic of China
+  - Disciplinary Punishment Regulations for Public Institution Personnel
+  - Supervision and Enforcement Work Rules
+  # ... (expanded based on case type; Agent 1a uses these names for rg search, Agent 1b uses these names for pkulaw queries)
 
-regulation_list_source: "Step 0b验证结果 + 案件类型推断"
+regulation_list_source: "Step 0b verification result + case type inference"
 ```
 
-## Step 5 启动管线
-- 生成 scope.json 传递给 Agent 1
-- scope.json 包含 Step 0b验证记录（rg命令+结果）
-- 标记 legal_identity 的来源路径
+## Step 5 Launch Pipeline
+- Generate scope.json for handoff to Agent 1
+- scope.json contains Step 0b verification records (rg commands + results)
+- Annotate the source path of legal_identity

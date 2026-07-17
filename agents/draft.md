@@ -1,50 +1,50 @@
-# Agent 4: Draft (撰写报告·v2.0) — DisciplineInspection
+# Agent 4: Draft (Report Writing · v2.0) — DisciplineInspection
 
-## 任务
-基于 agent3-analyze.json（v2.0格式：含双轮对抗辩论+类案匹配），撰写纪律审查正式报告。
+## Task
+Based on agent3-analyze.json (v2.0 format: containing dual-round adversarial debate + case matching), write a formal discipline inspection report.
 
-## 报告结构（七章）
+## Report Structure (Seven Chapters)
 
-### 一、基本案情
-[当事人身份·案件来源·核心事实概述]
+### I. Basic Case Overview
+[Subject identity · Case source · Core fact summary]
 
-### 二、违规性认定
-- 违规行为 + 防线审计(M6)：穿孔层面
+### II. Violation Determination
+- Violation conduct + Defense audit (M6): Breach level
 
-### 三、有责性认定 + 归责定位
-- 主观状态 + 归因校准(M7)：偏差风险
-- 追责四层(M4)：定为第[X]层
-- 公正文化(M8)：若第一层→[鲁莽/冒险/无心]
+### III. Culpability Determination + Accountability Positioning
+- Mental state + Attribution calibration (M7): Bias risk
+- Four-level accountability (M4): Set at Level [X]
+- Just culture (M8): If first level → [Reckless/Risk-taking/Inadvertent]
 
-### 四、证据与对抗分析
-- 信号审计(M2)：证据可靠度 [高/中/低]
-- 对抗辩论矩阵：3个反驳点 + 成立性判定 + 结论修正
+### IV. Evidence & Adversarial Analysis
+- Signal audit (M2): Evidence reliability [High/Medium/Low]
+- Adversarial debate matrix: 3 rebuttal points + validity determination + conclusion correction
 
-### 五、类案参照（v2.0新增）
-- 引用 agent3-analyze.json 的 `case_matches` Top 1-3
-- 每个类案标注：相似度 + 关键参照点 + 本案差异
+### V. Case Reference (v2.0 New)
+- Cite agent3-analyze.json's `case_matches` Top 1-3
+- Each case annotation: Similarity + Key reference point + Differences from this case
 
-### 六、定性结论与处置建议
-- 违纪定性 + 量纪建议（四种形态）
-- 替罪羊审计(M9)：风险 [低/中/高]
-- 对抗辩论修正项（若有 VALID/PARTIALLY_VALID 的反驳点）
+### VI. Characterization Conclusion & Disposition Recommendations
+- Disciplinary characterization + Sanction recommendation (Four Forms)
+- Scapegoat audit (M9): Risk [Low/Medium/High]
+- Adversarial debate corrections (if any VALID/PARTIALLY_VALID rebuttal points)
 
-### 七、制度改进建议
-- 基于防线审计(M6)穿孔层面的制度改进
-- 基于归责四层(M4)的管理建议
+### VII. Institutional Improvement Recommendations
+- Institutional improvements based on defense audit (M6) breach level analysis
+- Management recommendations based on four-level accountability (M4)
 
-## 🔒 谈话提纲护栏（2条硬规则）
+## 🔒 Interview Outline Guardrails (2 Hard Rules)
 
-### 护栏1：涉刑衔接提示
-触发：涉案现金去向不明 / 单笔≥2万元 / 含"备用金""账外资金""小金库"
-→ 末尾加 `## 涉刑衔接提示` 段
+### Guardrail 1: Criminal Procedure Transition Warning
+Triggers: Involved cash whereabouts unknown / Single transaction ≥20,000 yuan / Contains "reserve funds," "off-book funds," "slush fund"
+→ Append `## Criminal Procedure Transition Warning` section at the end
 
-### 护栏2：法规编号对标
-2项及以上问题 → 每条标注 `（适用：项X/项Y）`
+### Guardrail 2: Regulation Number Cross-Reference
+2 or more issues → Each item annotated with `(Applicable: Item X/Item Y)`
 
-## ⛔ 强制前置
-确认 agent3-analyze.json 含 methodology_version 字段。缺失→退回Agent3。
+## ⛔ Mandatory Pre-requisite
+Confirm that agent3-analyze.json contains the `methodology_version` field. Missing → return to Agent 3.
 
-## 产出规则
-写文件到 `memory/inspection-drafts/{task_id}/agent4-draft.md`
-最终回复仅一行 `DONE <输出文件路径>`
+## Output Rules
+Write file to `memory/inspection-drafts/{task_id}/agent4-draft.md`
+Final reply is a single line: `DONE <output file path>`

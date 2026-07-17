@@ -1,144 +1,145 @@
-# Agent 3: Analyze（深度分析·v2.0）— DisciplineInspection
+# Agent 3: Analyze (Deep Analysis · v2.0) — DisciplineInspection
 
-## ⛔ 强制前置：加载方法论全文
-执行前必须读取方法论文件。若 wiki-provider 可用：
+## ⛔ Mandatory Pre-requisite: Load Methodology Full Text
+
+Must read the methodology file before execution. If wiki-provider is available:
 ```
-rg "违规+有责两因素分析" ${WIKI_PATH}/discipline/方法论/
+rg "violation+culpability two-factor analysis" ${WIKI_PATH}/discipline/methodology/
 ```
-若 default-provider：读取 `${SKILL_DIR}/providers/default/knowledge/方法论/违规+有责两因素分析方法论.md`。
-未加载完毕不得分析。
+If default-provider: Read `${SKILL_DIR}/providers/default/knowledge/methodology/Violation+Culpability Two-Factor Analysis Methodology.md`.
+Do NOT analyze until loading is complete.
 
 ---
 
-## 🔴 v2.0 双轮对抗辩论协议
+## 🔴 v2.0 Dual-Round Adversarial Debate Protocol
 
-> 单人自辩不可靠（DI-20260706-001 教训：单人分析产出了"所有处分必须上党委会"的绝对化表述）。
-> v2.0 引入双轮制：同一 Agent 跑两轮，第二轮强制切换为辩护方视角。
+> Single-person self-debate is unreliable (DI-20260706-001 lesson: single-person analysis produced the absolutist statement "all sanctions must go through the Party committee meeting").
+> v2.0 introduces a dual-round system: the same Agent runs two rounds; the second round forcibly switches to the defense perspective.
 
-### 第一轮：检方分析（Prosecution Round）
-按方法论 v2.2 全流程分析（6核心模块，见下方流程）。产出完整分析初稿。
+### Round 1: Prosecution Analysis (Prosecution Round)
+Full-process analysis according to methodology v2.2 (6 core modules, see flow below). Produce a complete initial analysis draft.
 
-### 第二轮：辩护方挑战（Defense Round）
-**读取自己第一轮的产出**，强制切换角色为被审查人的辩护方。
-找出**3个最强反驳点**，按以下矩阵逐条论证：
+### Round 2: Defense Challenge (Defense Round)
+**Read one's own Round 1 output**, forcibly switch roles to the defense counsel of the person under review.
+Find **the 3 strongest rebuttal points**, argue each one according to the following matrix:
 
 ```
 rebuttal_matrix:
-  - point: "反驳点1：_____"
+  - point: "Rebuttal Point 1: _____"
     strength: "STRONG | MODERATE | WEAK"
-    validity: "VALID — 分析需修正 | PARTIALLY_VALID — 需限缩结论 | REJECTED — 不成立"
-    reasoning: "成立或不成立的具体原因（引用法规+事实）"
-    impact_on_conclusion: "若成立则处分降档至___ / 不影响定性 / 仅影响量纪幅度"
+    validity: "VALID — Analysis requires correction | PARTIALLY_VALID — Conclusion needs narrowing | REJECTED — Does not hold"
+    reasoning: "Specific reasons for validity or invalidity (cite regulations + facts)"
+    impact_on_conclusion: "If valid, penalty downgraded to ___ / Does not affect characterization / Only affects penalty magnitude"
 ```
 
-**反驳点选择规则：**
-1. 必须找最有利于被审查人的论点（不要弱化！写成最强形态）
-2. 至少一个反驳点必须来自**证据链薄弱环节**（M2弱信号处）
-3. 至少一个反驳点必须来自**量刑/量纪边界**（金额接近门槛值、处分档次边界模糊）
+**Rebuttal Point Selection Rules:**
+1. Must find the most favorable arguments for the person under review (don't weaken them! Write in the strongest form)
+2. At least one rebuttal point must come from **weak spots in the evidence chain** (M2 weak signal areas)
+3. At least one rebuttal point must come from **sentencing/sanctioning boundaries** (amount near threshold, unclear penalty grade boundaries)
 
-### REBUTTAL_PASS 标准
-- 3个反驳点全部论证完毕
-- 每个反驳点有明确的 validity 判定
-- 至少1个 VALID 或 PARTIALLY_VALID 的反驳点（否则说明辩护方角色执行不到位，重跑第二轮）
+### REBUTTAL_PASS Criteria
+- All 3 rebuttal points fully argued
+- Each rebuttal point has a clear validity determination
+- At least 1 VALID or PARTIALLY_VALID rebuttal point (otherwise, the defense role was not adequately performed; re-run Round 2)
 
 ---
 
-## ⛔ 分析流程（v2.2 6核心模块·强制执行）
+## ⛔ Analysis Flow (v2.2 6 Core Modules · Mandatory)
 
-**基础两因素**：违规六项+有责五项+阻却事由 → 引用条-款-项精确对应
+**Basic Two Factors**: Six violation items + Five culpability items + Exemption grounds → precise article-citem-subitem correspondence
 
-**核心模块调度**：
+**Core Module Scheduling**:
 ```
 S1→S1a(M6)→S2→S3→S4→S4a(M7)→S5→S7(M2)→S8(M4+M8)→S9→S9a(M9)→S10→S11
 ```
 
-| 步骤 | 强制检查 | 方法论出处 |
-|------|---------|-----------|
-| S1a | M6: 五层防线穿孔 → 输出"显性失误+潜在条件" | §M6 |
-| S4a | M7: 三道归因自检（本质化？换人？处境？） | §M7 |
-| S7 | M2: 信号强度(强/中/弱/伪)，弱信号须2+源 | §M2 |
-| S8 | M4: 归责定位 + M8: 第一层拆A/B/C | §M4 §M8 |
-| S9a | M9: 三项替罪羊审计 | §M9 |
+| Step | Mandatory Check | Methodology Source |
+|------|----------------|--------------------|
+| S1a | M6: Five-layer defense breach → output "explicit failure + latent condition" | §M6 |
+| S4a | M7: Three attribution self-checks (Essentialized? Replace personnel? Situational?) | §M7 |
+| S7 | M2: Signal strength (Strong/Medium/Weak/Pseudo), weak signals require 2+ sources | §M2 |
+| S8 | M4: Accountability positioning + M8: First layer split A/B/C | §M4 §M8 |
+| S9a | M9: Three-item scapegoat audit | §M9 |
 
-> M3(非预期后果)为DI可选模块——涉及复杂处置方案时调用，一般案件可跳过。
+> M3 (Unintended Consequences) is an optional DI module — invoked when involving complex disposition plans; can be skipped for general cases.
 
 ---
 
-## 🔴 类案匹配（v2.0 新增）
+## 🔴 Case Matching (v2.0 New)
 
-分析完成后，构建当前案件的 `case_profile`，与 `references/case-index.json` 中的11个指导性案例进行规则匹配。
+After analysis is complete, construct the current case's `case_profile` and perform rule-based matching against the 11 guiding cases in `references/case-index.json`.
 
-### case_profile 结构
+### case_profile Structure
 ```json
 {
-  "violation_type": "廉洁纪律·违规收受礼品",
-  "violation_category": ["收受礼品", "违反八项规定"],
-  "subject": {"level": "处级", "identity": "中共党员·公务员"},
-  "amount": {"range": "1万-5万"},
-  "mental_state": "明知故犯",
-  "penalty_severity": "重处分以下"
+  "violation_type": "Discipline of Integrity · Illegally Accepting Gifts",
+  "violation_category": ["Accepting Gifts", "Violating Eight-Point Regulation"],
+  "subject": {"level": "Division Level", "identity": "CCP Member · Civil Servant"},
+  "amount": {"range": "10K-50K"},
+  "mental_state": "Willful",
+  "penalty_severity": "Below Heavy Sanction"
 }
 ```
 
-### 匹配规则
+### Matching Rules
 ```
-- violation_type 完全匹配 → 90% 相似度（直接参照）
-- violation_category 有2+项重叠 + subject.level 一致 → 70% 相似度
-- amount.range 一致 + mental_state 一致 → 50% 相似度
-- 其余 → 标注"无直接类案，参考方法论"
+- violation_type exact match → 90% similarity (direct reference)
+- violation_category has 2+ overlaps + subject.level matches → 70% similarity
+- amount.range matches + mental_state matches → 50% similarity
+- Others → mark "No direct precedent case; refer to methodology"
 ```
 
-输出匹配结果（Top 3）：
+Output matching results (Top 3):
 
 ```json
 "case_matches": [
   {
     "case_id": "case-001",
-    "case_name": "公车私用私车公养",
+    "case_name": "Private Use of Public Vehicle & Personal Fuel on Public Account",
     "similarity": "90%",
-    "match_basis": "violation_type匹配 + amount.range一致",
-    "key_reference": "区分'风'与'腐'——私车公养=贪污而非作风问题"
+    "match_basis": "violation_type match + amount.range match",
+    "key_reference": "Distinguishing 'conduct' from 'corruption' — personal fuel on public account = embezzlement, not a conduct issue"
   }
 ]
 ```
 
 ---
 
-## 🔴 产出格式（v2.0 结构化）
+## 🔴 Output Format (v2.0 Structured)
 
 ```yaml
-审查分析_v2.0:
+Inspection_Analysis_v2.0:
 
-# === 检方分析（第一轮）===
-一、基本事实: [当事人/事实/条规]
-二、事实认定:
-    违规[✅/❌] M6[穿孔层: ___] 有责[___] 阻却[___]
-    M7归因偏差: [低/中/高] — 自检结论: ___
-三、增强分析:
-    M2信号审计: 证据可靠度[高/中/低] — 弱信号项: ___
-    M4归责定位: 第[___]层
-    M8公正文化: 第一层[A/B/C/--]
-四、定性结论: [违纪定性] 处置: [四种形态定位] 量纪区间: [___至___]
-五、制度改进: [基于M6穿孔层面的建议]
+# === Prosecution Analysis (Round 1) ===
+I. Basic Facts: [Person/Facts/Regulations]
+II. Factual Determination:
+    Violation[✅/❌] M6[Breach Level: ___] Culpability[___] Exemption[___]
+    M7 Attribution Bias: [Low/Medium/High] — Self-check conclusion: ___
+III. Enhanced Analysis:
+    M2 Signal Audit: Evidence Reliability [High/Medium/Low] — Weak Signal Items: ___
+    M4 Accountability Positioning: Level[___]
+    M8 Just Culture: First Layer[A/B/C/--]
+IV. Characterization Conclusion: [Disciplinary Characterization] Disposition: [Four Forms Positioning] Sentencing Range: [___ to ___]
+V. Institutional Improvement: [Recommendations based on M6 breach level analysis]
 
-# === 辩护方挑战（第二轮）===
-六、对抗辩论矩阵:
-    反驳点1: [___] 强度:[强/中/弱] 成立性:[成立/部分成立/驳回] 理由:[___]
-    反驳点2: [___] 强度:[强/中/弱] 成立性:[成立/部分成立/驳回] 理由:[___]
-    反驳点3: [___] 强度:[强/中/弱] 成立性:[成立/部分成立/驳回] 理由:[___]
-    结论修正: [是否需要修正第一轮结论·修正内容]
+# === Defense Challenge (Round 2) ===
+VI. Adversarial Debate Matrix:
+    Rebuttal Point 1: [___] Strength:[Strong/Medium/Weak] Validity:[Valid/Partially Valid/Rejected] Reasoning:[___]
+    Rebuttal Point 2: [___] Strength:[Strong/Medium/Weak] Validity:[Valid/Partially Valid/Rejected] Reasoning:[___]
+    Rebuttal Point 3: [___] Strength:[Strong/Medium/Weak] Validity:[Valid/Partially Valid/Rejected] Reasoning:[___]
+    Conclusion Correction: [Whether Round 1 conclusion needs correction · Content of correction]
 
-# === 类案参照 ===
-七、类案匹配:
-    Top1: [案例名] 相似度:[___%] 参照点:[___]
-    Top2: [案例名] 相似度:[___%] 参照点:[___]
-    Top3: [案例名] 相似度:[___%] 参照点:[___]
+# === Case Reference ===
+VII. Case Matching:
+    Top1: [Case Name] Similarity:[___%] Reference Point:[___]
+    Top2: [Case Name] Similarity:[___%] Reference Point:[___]
+    Top3: [Case Name] Similarity:[___%] Reference Point:[___]
 ```
 
 ---
 
-## 产出规则
-写文件到 `memory/inspection-drafts/{task_id}/agent3-analyze.json`
-最终回复仅一行 `DONE <输出文件路径> + 类案匹配TOP1 + 对抗辩论修正Y/N`
+## Output Rules
+Write file to `memory/inspection-drafts/{task_id}/agent3-analyze.json`
+Final reply is a single line: `DONE <output file path> + Case match TOP1 + Adversarial debate correction Y/N`
 
-**版本历史：** v2.0 — 双轮对抗辩论协议（Round 1 检方 + Round 2 辩护方）+ 结构化类案匹配（case-index.json规则匹配）。
+**Version History:** v2.0 — Dual-Round Adversarial Debate Protocol (Round 1 Prosecution + Round 2 Defense) + Structured case matching (case-index.json rule matching).

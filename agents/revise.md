@@ -1,22 +1,22 @@
-# Agent 6: Revise (修复·v2.2) — DisciplineInspection
+# Agent 6: Revise (Fix · v2.2) — DisciplineInspection
 
-## 任务
-基于 agent5-review_ledger.json 的 must_fix 逐项修复 agent4-draft.md。
+## Task
+Based on the must_fix items in `agent5-review_ledger.json`, fix `agent4-draft.md` item by item.
 
-## ⛔ 方法论缺失修复
+## ⛔ Methodology Deficiency Repair
 
-若 review 标记方法论必过项缺失，按以下顺序补全：
-1. 定位 agent3-analyze.json 中对应模块输出
-2. 将模块结论嵌入报告对应章节
-3. 不可编造——若 agent3 未产出，退回重跑
+If the review marks a mandatory methodology item as missing, supplement it in the following order:
+1. Locate the corresponding module output in agent3-analyze.json
+2. Embed the module conclusion into the corresponding report chapter
+3. Do NOT fabricate — if agent3 did not produce the output, return to re-run
 
-## 输出
-- `agent6-final.md`: 修复后终版
-- `revision_log.json`: 修复记录
+## Output
+- `agent6-final.md`: Fixed final version
+- `revision_log.json`: Revision record
 
-## 修复完成后
-若原始review_score < 70，Review可做二次验证。
+## After Fix Completion
+If the original review_score < 70, Review may perform a secondary verification.
 
-## 产出规则
-写文件到 `memory/inspection-drafts/{task_id}/agent6-final.md` 和 `revision_log.json`
-最终回复仅一行 `DONE <输出文件路径>`
+## Output Rules
+Write files to `memory/inspection-drafts/{task_id}/agent6-final.md` and `revision_log.json`
+Final reply is a single line: `DONE <output file path>`

@@ -1,19 +1,55 @@
 # Agent 1b: Search-pkulaw（版本验证）— DisciplineInspection 🔴
 
 ## 角色
-法规版本验证者。**唯一任务**：对 Agent 1a 产出的法规列表执行 pkulaw 版本验证。
+法规版本验证者。**唯一任务**：对 Agent 1a 产出的法规列表执行版本验证。
 
 ## 输入
-`agent1a-search-rg.json`（读取 `regulation_list` 字段）
+`agent0-scope.json`（读取 `regulation_list` 字段）
+
+> 🔴 v1.5: 输入源从 agent1a 改为 agent0 — 支持 1a 与 1b 并行执行。
+> Agent 0 的 `regulation_list` 基于 Step 0b 身份验证 + 案件类型推断，比 Agent 1a 的搜索后列表更完整（不会遗漏 1a 未命中但在法律框架中必要的法规）。
 
 ## 输出
 `agent1b-search-pkulaw.json`
 
 ---
 
+## 🔌 Provider 检测（Agent 启动时首先执行）
+
+```
+1. 检查 pkulaw-search 脚本是否存在:
+   Test-Path "${SKILL_DIR}/../pkulaw-search/scripts/pkulaw_search.py"
+2. 检查 pkulaw-mcp 服务是否可用:
+   python ${SKILL_DIR}/../pkulaw-search/scripts/pkulaw_search.py law --title "监察法" --json
+3. 脚本存在 + API 返回有效 → pkulaw-provider 可用 → 正常执行 Step 1B
+4. 脚本不存在 或 API 不可用 → pkulaw-provider 不可用 → 走降级路径
+```
+
+---
+
+## 🟡 降级路径：pkulaw-provider 不可用时
+
+**不阻断管线，产出降级版本验证结果：**
+
+对于 `regulation_list` 中的每部法规：
+1. 读取 agent1a-search-rg.json 中该法规的 `source_file`
+2. 检查 WIKI 文件 frontmatter 中的版本信息（若有）
+3. 标记 `status: "VERSION_UNVERIFIED"` + `degradation_reason: "pkulaw-mcp不可用"`
+4. 仍然产出完整的 `version_verified` 数组（非空），但所有条目均为 VERSION_UNVERIFIED
+
+**⚠️ 降级产出规则：**
+- `version_verified` 数组**必须非空**（否则 Agent 2 Gate 1 FAIL）
+- 每条法规都必须有对应条目
+- `degradation_mode: true` 字段标记降级模式
+- Agent 2 / Agent 3 看到此标记 → 在分析产出中附加 ⚠️ 警告
+
+---
+
 ## ⛔ Step 1B [版本验证·2026-07-15新增·不可跳过] 🔴 最高优先级
 
-**对 Agent 1a 产出的 regulation_list 中的每部法规，逐一通过 pkulaw-search 确认版本为现行有效后才能引用。**
+**仅当 pkulaw-provider 可用时执行。不可用时走上方降级路径。**
+
+**对 Agent 0 scope 中 `regulation_list` 的每部法规，逐一通过 pkulaw-search 确认版本为现行有效后才能引用。**
 
 ```
 python skills/pkulaw-search/scripts/pkulaw_search.py law --title "法规名" --json
@@ -87,4 +123,4 @@ python skills/pkulaw-search/scripts/pkulaw_search.py law --title "法规名" --j
 写文件到 `memory/inspection-drafts/{task_id}/agent1b-search-pkulaw.json`
 最终回复仅一行 `DONE <输出文件路径>`
 
-**版本历史：** v1.0 — 从 search.md 拆分，专注 pkulaw 版本验证，rg 搜索已移交 Agent 1a。
+**版本历史：** v1.1 — v1.5 输入源从 agent1a 改为 agent0，支持 1a/1b 并行执行。v1.0 — 从 search.md 拆分，专注 pkulaw 版本验证。

@@ -1,4 +1,4 @@
-﻿# Agent 0 — Scope (入口域定义)
+# Agent 0 — Scope (入口域定义)
 
 > 纪律审查第一入口Agent。从用户原始输入提取核心要素、定义审查域。
 > 🔴 **Step 0b 强制协议（2026-07-08）**：所有身份/法律分类前必须执行rg验证，禁止"觉得知道"。
@@ -45,7 +45,7 @@ rg "医院巡查|大型医院巡查" wiki/        → 重定向→建议走HI
 
 | 要素 | 提取规则 | 示例 |
 |:-----|:---------|:-----|
-| 主体 | 被调查/审查对象的姓名+职务+所在单位 | 张某，心内科主任，某三甲医院 |
+| 主体 | 被调查/审查对象的姓名+职务+所在单位 | 张某，科主任，某医院 |
 | 身份认定 | **Step 0b验证后的法律身份** | ✅ 公职人员/党员/普通职工/其他 |
 | 涉嫌行为 | 具体的违纪/违规/违法行为描述 | 收受医药代表回扣 |
 | 时间范围 | 行为发生的时间段 | 2020-2024年 |
@@ -70,7 +70,19 @@ issues: [<主要问题1>, <问题2>, ...]
 timeframe: <起止时间>
 risk_level: <高/中/低>
 key_articles: [<相关法规条款>]
-agent_chain: scope → search → audit → analyze → draft → review → revise → publish
+agent_chain: scope → (search-rg ∥ search-pkulaw) → merge → audit → analyze → draft → review → revise → publish
+
+# 🔴 v1.5 新增：regulation_list — 并行管线关键字段
+# 本字段同时供给 Agent 1a (rg全文检索) 和 Agent 1b (pkulaw版本验证)
+regulation_list:
+  - 中国共产党纪律处分条例
+  - 中华人民共和国监察法
+  - 中华人民共和国公职人员政务处分法
+  - 事业单位工作人员处分规定
+  - 监督执纪工作规则
+  # ... (基于案件类型扩展，Agent 1a 用这些名称做 rg 搜索，Agent 1b 用这些名称做 pkulaw 查询)
+
+regulation_list_source: "Step 0b验证结果 + 案件类型推断"
 ```
 
 ## Step 5 启动管线

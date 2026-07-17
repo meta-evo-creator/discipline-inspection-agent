@@ -1,8 +1,8 @@
 ﻿---
 name: discipline-inspection
-version: 1.3.0
+version: 2.0.0
 description: |
-  Discipline Inspection v1.3 ⚔️ 方法论v2.2·6核心模块(M2/M4/M6/M7/M8/M9)+基础两因素强制执行·聚焦纪检监察办案。(Open Source Edition)
+  Discipline Inspection v2.0 ⚔️ 并行管线(1a∥1b→1c)+双轮对抗辩论+类案结构化索引·方法论v2.2·6核心模块+基础两因素强制执行·聚焦纪检监察办案。⛔ Confidential.
 platforms:
   - openclaw
 tools:
@@ -19,7 +19,7 @@ metadata:
 
 > **纪律为准绳，持续守望。** 8-Agent File-based Handoff Pipeline + 违规+有责双因素分析法 + 二十四字方针6维Review评分矩阵。
 > 与 DR v4.0 同构。
-> ⛔ 保密，适用于纪检监察实务场景。
+> ⛔ 保密专属，仅本地使用，不上传 GitHub/ClawHub。
 
 > 📎 共享配置：`skills/supervision-shared/shared-config.yaml`（WIKI路径/搜索链/模板）
 
@@ -36,14 +36,14 @@ metadata:
 - `responsibility_assessment_ref` — 责任分析（候选）
 - `sanction_recommendation_ref` — 处分建议（候选）
 - `mitigation_aggravation_ref` — 从轻从重情节
-- `owner_gate_handoff_ref` — Domain Owner确认门禁交接包
+- `owner_gate_handoff_ref` — 领域所有者确认门禁交接包
 
 **本技能绝不产出：**
 - 最终处分决定 · 问责结论 · 组织处理决定
 - 对案件定性/量纪的最终判定
 - 替代纪委会议/审批程序的任何产出
 
-上述权限归 **Domain Owner（领域所有者）** 及纪检监察机构法定程序。
+上述权限归 **领域所有者** 及纪律审查/监察法定程序。
 
 > 本边界声明对应 SOLO 655 铁律④（权责两清：最小代理——每项授权临时、有域、可撤销）。
 
@@ -61,25 +61,35 @@ metadata:
 |:------|:------|:---------|:-------|
 | 0 | Scope | `agent0-scope.json` | `source_pack_ref` |
 | 1a | Search-rg | `agent1a-search-rg.json` | `article_match_ref`（条款原文+出处） |
-| 1b | Search-pkulaw | `agent1b-search-pkulaw.json` | `version_verified_ref` |
+| 1b ∥ | Search-pkulaw | `agent1b-search-pkulaw.json` | `version_verified_ref` |
+| 1c | Merge | `agent1-merged.json` | `merged_search_ref`（1a+1b合并） |
 | 2 | Audit | `agent2-audit.json` | `evidence_chain_ref` + `article_match_ref`（版本审计后） |
 | 3 | Analyze | `agent3-analyze.json` | `violation_finding_ref[]` + `responsibility_assessment_ref` + `mitigation_aggravation_ref` + `sanction_recommendation_ref` |
 | 4 | Draft | `agent4-draft.md` | 上述 ref 综合 + 报告/提纲正文 |
 | 5 | Review | `agent5-review_ledger.json` | 评分矩阵 + 修复建议（消费所有上游 ref） |
 | 6 | Revise | `agent6-final.md` | 修正后的候选终版 |
-| 7 | Publish | `agent6-final.md` | `owner_gate_handoff_ref`（汇总所有候选→Domain Owner确认） |
+| 7 | Publish | `agent6-final.md` | `owner_gate_handoff_ref`（汇总所有候选→领域所有者确认） |
 
 ### 交接规范
 
 ```
-Agent 0 (source_pack_ref)
-  → Agent 1a/1b (article_match_ref + version_verified_ref)
-    → Agent 2 (evidence_chain_ref, 消费 1a+1b 的版本验证结果)
-      → Agent 3 (violation_finding_ref + responsibility_assessment_ref + sanction_recommendation_ref)
-        → Agent 4 (所有上游 ref 综合为报告/提纲)
-          → Agent 5 (Review 评分矩阵消费所有 ref)
-            → Agent 6 (修正)
-              → Agent 7 (owner_gate_handoff_ref → Domain Owner)
+Agent 0 (source_pack_ref + regulation_list)
+  ├─→ Agent 1a (article_match_ref) ─┐
+  └─→ Agent 1b (version_verified_ref) ─┤  ← 🔴 v1.5 并行
+                                       ↓
+                                Agent 1c (merged_search_ref, 消费 1a+1b)
+                                       ↓
+                                Agent 2 (evidence_chain_ref, 消费 merged)
+                                       ↓
+                                Agent 3 (violation_finding_ref + responsibility_assessment_ref + sanction_recommendation_ref)
+                                       ↓
+                                Agent 4 (所有上游 ref 综合为报告/提纲)
+                                       ↓
+                                Agent 5 (Review 评分矩阵消费所有 ref)
+                                       ↓
+                                Agent 6 (修正)
+                                       ↓
+                                Agent 7 (owner_gate_handoff_ref → 领域所有者)
 ```
 
 > 每个 Agent 产出文件内应包含其 ref 的结构化字段（见模板详细定义）。主会话验证 ref 完整性（检查清单见模板），不读全文。
@@ -108,6 +118,7 @@ Agent 0 (source_pack_ref)
 {
   "pipeline_id": "DI-YYYYMMDD-xxx",
   "skill": "discipline-inspection",
+  "version": "2.0.0",
   "topic": "问题摘要",
   "started_at": "ISO时间",
   "last_updated": "ISO时间",
@@ -115,7 +126,8 @@ Agent 0 (source_pack_ref)
   "phases": {
     "0: Scope":     {"status": "completed", "detail": "问题界定"},
     "1a: Search-rg":  {"status": "running",   "detail": "rg WIKI搜索中"},
-    "1b: Search-pkulaw": {"status": "pending",   "detail": "pkulaw版本验证"},
+    "1b: Search-pkulaw": {"status": "running",   "detail": "pkulaw版本验证中 ∥ 并行"},
+    "1c: Merge":    {"status": "pending",   "detail": ""},
     "2: Audit":     {"status": "pending",   "detail": ""},
     "3: Analyze": {"status": "pending",   "detail": ""},
     "4: Draft":   {"status": "pending",   "detail": ""},
@@ -128,19 +140,22 @@ Agent 0 (source_pack_ref)
 
 ---
 
-## 八阶段管线（按模式分流）
+## 9-Agent并行管线（按模式分流）
 
 ```
-Phase 0: Scope     → Agent 0: 问题界定             → agent0-scope.json
-Phase 1a: Search-rg → Agent 1a: rg WIKI法规+案例搜索 → agent1a-search-rg.json
-Phase 1b: Search-pkulaw → Agent 1b: pkulaw版本验证   → agent1b-search-pkulaw.json
-Phase 2: Audit     → Agent 2: 法规引用审计(合并1a+1b) → agent2-audit.json
-Phase 3: Analyze → Agent 3: 深度分析               → agent3-analyze.json
-Phase 4: Draft   → Agent 4: 撰写报告/提纲          → agent4-draft.md
-Phase 5: Review  → Agent 5: 内容质量审计           → agent5-review_ledger.json
-Phase 6: Revise  → Agent 6: 修复                   → agent6-final.md + revision_log.json
-Phase 7: Publish → 主会话: solo-file-transfer      → IMA知识库
+Phase 0: Scope       → Agent 0: 问题界定                → agent0-scope.json
+                         ├─→ Agent 1a: rg WIKI搜索      → agent1a-search-rg.json
+                         └─→ Agent 1b: pkulaw版本验证   → agent1b-search-pkulaw.json  ∥ 并行
+Phase 1c: Merge       → Agent 1c: 合并1a+1b              → agent1-merged.json
+Phase 2: Audit       → Agent 2: 法规引用审计(消费merged)  → agent2-audit.json
+Phase 3: Analyze   → Agent 3: 深度分析                  → agent3-analyze.json
+Phase 4: Draft     → Agent 4: 撰写报告/提纲             → agent4-draft.md
+Phase 5: Review    → Agent 5: 内容质量审计              → agent5-review_ledger.json
+Phase 6: Revise    → Agent 6: 修复                      → agent6-final.md + revision_log.json
+Phase 7: Publish   → 主会话: solo-file-transfer         → IMA知识库
 ```
+
+**并行节点：** Agent 0 的 `regulation_list` 同时供给 1a 和 1b，两者独立运行无依赖。1c 做轻量合并（匹配+差异标记），有效时间 = max(1a, 1b) + merge(10s)。
 
 **每个 Agent 独立隔离会话 (context:isolated, lightContext:true)。主会话只做 spawn + gate + 文件验证。**
 
@@ -153,9 +168,9 @@ Phase 7: Publish → 主会话: solo-file-transfer      → IMA知识库
 
 | 模式 | 触发场景 | 管线 | Agent数 |
 |:-----|:---------|:-----|:--:|
-| **full** | 案件定性、处分建议 | 0→1a→1b→2→3→4→5→6→7 | 8+1 |
-| **interview** | 谈话提纲 | 0→1a→1b→2→3+4→7 (Analyze+Draft合并) | 5+1 |
-| **quick** | 法规咨询、条款查询 | 0→1a→1b→2→7 | 4+1 |
+| **full** | 案件定性、处分建议 | 0→(1a∥1b)→1c→2→3→4→5→6→7 | 9+1 |
+| **interview** | 谈话提纲 | 0→(1a∥1b)→1c→2→3+4→7 (Analyze+Draft合并) | 6+1 |
+| **quick** | 法规咨询、条款查询 | 0→(1a∥1b)→1c→2→7 | 5+1 |
 
 **分流决策点：** Agent 0 Scope 完成后，主会话根据 `task_type` 选择模式。
 
@@ -173,7 +188,7 @@ read <output_file_path> → 检查文件存在且size > 0
 # ⛔ 只验证存在性，不读文件内容到主会话上下文
 ```
 
-**文件不存在 → 标记该 Agent 为 `failed` → 不进入下一阶段 → 向Domain Owner报告具体失败原因。**
+**文件不存在 → 标记该 Agent 为 `failed` → 不进入下一阶段 → 向领域所有者报告具体失败原因。**
 **文件存在 → 仅记录路径 + 3行摘要 → 进入下一阶段。**
 
 ---
@@ -181,11 +196,12 @@ read <output_file_path> → 检查文件存在且size > 0
 ## 输出路径协议
 
 ```
-$WORKSPACE\workspace\memory\inspection-drafts\{task_id}\
-├── agent0-scope.json          ← Phase 0: 问题界定
+C:\Users\{user}\.openclaw\workspace\memory\inspection-drafts\{task_id}\
+├── agent0-scope.json          ← Phase 0: 问题界定（含regulation_list）
 ├── agent1a-search-rg.json     ← Phase 1a: rg WIKI法规+案例+方法论 (含source_line)
-├── agent1b-search-pkulaw.json ← Phase 1b: pkulaw版本验证 (含version_verified)
-├── agent2-audit.json          ← Phase 2: 法规引用审计 (合并1a+1b)
+├── agent1b-search-pkulaw.json ← Phase 1b: pkulaw版本验证 (含version_verified) ∥
+├── agent1-merged.json         ← Phase 1c: 1a+1b合并 (含匹配状态+差异标记)
+├── agent2-audit.json          ← Phase 2: 法规引用审计 (消费merged)
 ├── agent3-analyze.json        ← Phase 3: 分析推理 (interview模式=分析+提纲草稿)
 ├── agent4-draft.md            ← Phase 4: 正式报告/底稿 (full模式)
 ├── agent5-review_ledger.json  ← Phase 5: 内容质量审计 + PASS/WARN/FAIL
@@ -253,138 +269,40 @@ $WORKSPACE\workspace\memory\inspection-drafts\{task_id}\
 
 ---
 
-### Agent 1: Search（法规搜索）⚠️ 行为强制约束
+### Agent 1: Search — 🔴 v1.5 并行架构
 
-**输入：** `agent0-scope.json`
-**输出：** `agent1a-search-rg.json + agent1b-search-pkulaw.json`
+**架构：** Agent 0 `regulation_list` → (Agent 1a ∥ Agent 1b) → Agent 1c 合并
 
-**⛔ 搜索行为强制约束：**
+**Agent 1a (search-rg):** 输入 `agent0-scope.json` → 输出 `agent1a-search-rg.json`
+- rg全文检索法规库（条款原文 + source_line）
+- 详见 `agents/search-rg.md`
 
-```
-Step 1 [MANDATORY·不可跳过]:
-  ripgrep 纪律法规库 + 医药行为规范 + 指导性案例 → 法规/案例原文
-  rg -n "关键词" $WORKSPACE\wiki\main\sources\discipline\法规\
-  rg -n "关键词" $WORKSPACE\wiki\main\sources\medical\
-  rg -n "关键词" $WORKSPACE\wiki\main\sources\discipline\指导性案例\
-  rg -n "关键词" $WORKSPACE\wiki\main\sources\hospital-inspection\
-  rg -n "关键词" $WORKSPACE\wiki\main\sources\inspection\
-  必须产出: 法规/案例原文(一字不差) + 来源文件路径
+**Agent 1b (search-pkulaw):** 输入 `agent0-scope.json`（regulation_list）→ 输出 `agent1b-search-pkulaw.json`
+- pkulaw版本验证（现行有效/已修改/废止）
+- 详见 `agents/search-pkulaw.md`
+- **并行执行：** 1a和1b无相互依赖，同时启动
 
-  核心法规（已确认版本）:
-    中国共产党纪律处分条例_2023修订
-    中华人民共和国监察法_2024修正
-    监察法实施条例_2025修订
-    监督执纪工作规则_2019
-    事业单位工作人员处分规定_2023
-    中华人民共和国公职人员政务处分法2020.6.20
-    中华人民共和国刑法（根据修正案十一修正，2020年）
+---
 
-  医药行业规范（医德医风方向优先引用）:
-    医疗机构从业人员行为规范（2012，10章60条完整原文）
-    医疗机构工作人员廉洁从业九项准则（2021，国卫医发37号）
-    医务人员职业道德准则2025年版（2025，国卫医政发9号，四部门联合发布）
+### Agent 1c: Merge（法规搜索合并·v1.5新增）🔀
 
-  时间预算: 1-2分钟
+**输入：** `agent0-scope.json` + `agent1a-search-rg.json` + `agent1b-search-pkulaw.json`
+**输出：** `agent1-merged.json`
 
-Step 1A [省级法规搜索·P-002复用于DI·不可跳过]:
-  ⚠️ 搜索范围必须覆盖 **国家→省级→院内** 三级法规链
-  ⚠️ 任务涉及广东省机构和人员时，必须搜索省级法规:
-    rg -n "关键词" $WORKSPACE\wiki\main\sources\inspection\ --include "*粤府令*" --include "*广东省*" --include "*地方性法规*" -i
-    ⚠️ 若rg未命中 → web_search补充: search "site:gov.cn 广东省 [法规领域] 办法"
-  获取全文后下载至 wiki/main/sources/inspection/ 再引用
-  时间预算: 1-2分钟
+**核心职责：** 以 Agent 0 的 `regulation_list` 为基准，将 1a（条款原文）和 1b（版本记录）合并为统一格式，供 Agent 2 消费。
 
-Step 1B [版本验证·2026-07-15新增·不可跳过]:
-  ⚠️ WIKI中命中的法规，**必须通过 pkulaw-search 确认版本为现行有效**后才能引用
-  ① 对每部WIKI命中的核心法规:
-    python skills/pkulaw-search/scripts/pkulaw_search.py law --title "法规名" --json
-    → 检查 timeliness/发布日期/施行日期
-    → version字段与WIKI frontmatter对照
-  ② 版本不一致 → 标记 [VERSION_OUTDATED] → 触发 regulation-manager update
-  ③ 输出到 agent1a-search-rg.json + agent1b-search-pkulaw.json 的 version_verified 字段
-  时间预算: 1-2分钟
-
-Step 2 [仅当Step 1+1A+1B覆盖不足]:
-  执行（按优先级）:
-  ① Tavily/web_search → 政府网站法规搜索（绕过WAF获取索引缓存全文）
-     search "site:gov.cn OR site:ccdi.gov.cn 法规名 文号"
-  ② ①仍不满足 → babata-search 最新指导性案例/方法论文
-     cd $WORKSPACE\workspace\skills\babata-search\scripts; node search.js baidu "关键词"
-  限制: 最多3组关键词
-  时间预算: 2-3分钟
-
-Step 3 [WIKI缺失/版本滞后·触发RM入库]:
-  ⚠️ Step 1未命中或Step 1B发现版本滞后 → 触发 regulation-manager 技能:
-    RM add → PKULaw MCP确认 → 全文下载 → 规范化 → WIKI入库
-    RM update → 新旧对比 → 替换旧版
-
-⛔ 禁止:
-  - 跳过Step 1直接做web搜索
-  - 跳过Step 1B直接引用WIKI中的法规（未确认版本时效性）❗2026-07-15
-  - 用web_fetch打开百度/微信文章
-  - 凭记忆引用条款号/案例
-  - 条款号须从rg输出中直接提取，不得自行编造/推算条款编号（❗幻觉防范——若rg输出无条款号则标注'[条款号待确认]'）
-
-📡 `[UNCERTAIN]` 标记协议（数据溯源链·P-001复用于DI）:
-  - 从web_fetch/web_search获取的非官方源数据（来自第三方网站而非gov.cn/ccdi.gov.cn）→ 标注`[UNCERTAIN: 来源非官方]`
-  - quantifiable数据（金额、数量、比例等）无法溯源官方源或来自推测估算 → 标注`[UNCERTAIN: 推测数据]`
-  - 标注`[UNCERTAIN]`的数据项，下行Agent 2 (Audit) 必须将其列为`unsourced_claims`，**禁止**再作为定量计算参数传递给Agent 3 (Analyze)
-
-📡 搜索来源优先级（P-003复用于DI）:
-  法规来源: gov.cn > ccdi.gov.cn > flk.npc.gov.cn > 官方公报 > 第三方转载
-  案例来源: 中央纪委国家监委官网 > 省级纪委监委官网 > 裁判文书网 > 第三方整理
-
-```
-
-**产出物结构：**
-- `legal_provisions` — 每条含 `law/article/text_exact/source_file/applicability`
-- `guiding_cases` — 指导性案例（批次+编号+核心事实+处理结论+参考价值）
-- `methodology_notes` — 方法论文要点（违规+有责两因素分析等）
-- `penalty_benchmarks` — 处分档次对照
-- `search_log` — 搜索路径→结果追踪
-
-```json
-{
-  "legal_provisions": [
-    {
-      "law": "法规名",
-      "article": "条款号",
-      "text_exact": "原文",
-      "source_file": "绝对路径",
-      "applicability": "适用性"
-    }
-  ],
-  "guiding_cases": [
-    {
-      "batch": "批次",
-      "case_id": "编号",
-      "core_facts": "核心事实",
-      "conclusion": "处理结论",
-      "reference_value": "参考价值"
-    }
-  ],
-  "methodology_notes": [
-    "方法论要点"
-  ],
-  "penalty_benchmarks": {
-    "处分档次对照": {}
-  },
-  "total_clauses": 0,
-  "total_cases": 0,
-  "search_log": [
-    "搜索追踪记录"
-  ]
-}
-```
-
-## ⚠️ 产出规则
-写文件输出，最终回复仅一行 `DONE <输出文件路径>`。
+**合并规则：**
+- 逐法规三向匹配（rg命中 + pkulaw验证状态）
+- 差异标记：rg命中但pkulaw未验证 → UNVERIFIED；rg未命中但pkulaw有记录 → 标注search_miss
+- 不修改 1a/1b 产出，只做合并+标记
+- 详见 `agents/merge.md`
 
 ---
 
 ### Agent 2: Audit（法规引用审计）
 
-**输入：** `agent0-scope.json` + `agent1a-search-rg.json + agent1b-search-pkulaw.json`
+**输入：** `agent0-scope.json` + `agent1-merged.json`（1c合并产出）
+> 🔴 v1.5: 输入从双源（agent1a + agent1b）改为单源（agent1-merged）
 **输出：** `agent2-audit.json`
 
 **审计清单：**
@@ -446,12 +364,16 @@ Step 3 [WIKI缺失/版本滞后·触发RM入库]:
 
 ---
 
-### Agent 3: Analyze（深度分析·违规+有责双因素分析法）
+### Agent 3: Analyze（深度分析·v2.0 双轮对抗辩论 + 类案匹配）
 
-**输入：** `agent0-scope.json` + `agent1a-search-rg.json + agent1b-search-pkulaw.json` + `agent2-audit.json`
+**输入：** `agent0-scope.json` + `agent1-merged.json` + `agent2-audit.json`
 **输出：** `agent3-analyze.json`（full模式）/ `agent4-draft.md`（interview模式直接写提纲）
 
-**分析方法论：违规+有责双因素分析框架**
+> 🔴 v2.0: 双轮对抗辩论协议 — Round 1 检方分析 + Round 2 辩护方挑战（3反驳点矩阵）。
+> 🔴 v2.0: 类案匹配 — 基于 `references/case-index.json` 结构化标签的规则匹配。
+> v1.5: 输入从双源改为单源（agent1-merged）。
+
+**分析方法论：违规+有责双因素分析框架 v2.2**
 
 > 方法论来源: `wiki/main/sources/discipline/方法论/违规+有责两因素分析方法论.md`
 > 嵌入自中纪委执纪执法指导性案例方法论。
@@ -582,9 +504,9 @@ Agent 3 必须在分析中构造最强对抗观点并逐条驳回。这是防止
 写文件输出，最终回复仅一行 `DONE <输出文件路径>`。
 
 ⏸️ **STOP_FOR_REVIEW**
-向Domain Owner展示分析阶段产出摘要（审计发现TOP 5 + 风险排序 + 初步结论），等待回复。
-- Domain Owner回复「继续」或超时15分钟 → 用当前优先级进入Draft
-- Domain Owner调整优先级 → 按反馈重排序后进入Draft
+向领域所有者展示分析阶段产出摘要（审计发现TOP 5 + 风险排序 + 初步结论），等待回复。
+- 领域所有者回复「继续」或超时15分钟 → 用当前优先级进入Draft
+- 领域所有者调整优先级 → 按反馈重排序后进入Draft
 
 ---
 
@@ -721,7 +643,7 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 - 元数据写入 `memory/inspection-drafts/<case>/` 目录下的独立trace文件
 - 报告只保留：标题、日期、执行摘要、分析正文、法规引用（附条款号+原文）
 
-**常用KB_ID：** 见项目文档中的知识库配置。
+**常用KB_ID：** 见 MEMORY.md → IMA知识库段。
 
 ---
 
@@ -733,9 +655,34 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 
 ---
 
-## 法规知识库（独立数据层）
+## 法规知识库（可插拔Provider架构 🔌 v1.4.0）
 
-**纪律法规**（`wiki/main/sources/discipline/法规/`，共45部）:
+> 法规数据层通过 Provider 接口与管线解耦。详见 `providers/regulation-source.interface.md`。
+
+### Provider 自动检测
+
+管线启动时按以下优先级选择知识源：
+1. `WIKI_PATH` 环境变量存在 → wiki-provider（完整45+部法规）
+2. `pkulaw-mcp` 可用 → 叠加 pkulaw-provider（版本验证）
+3. 以上均不可用 → default-provider（3部核心法规demo）
+
+### 可用 Provider
+
+| Provider | 法规检索 | 版本验证 | 案例搜索 | 适用场景 |
+|:---------|:-------:|:-------:|:-------:|:---------|
+| **default-provider** | 3部核心 | ❌ | ❌ | 开源用户开箱即用 |
+| **wiki-provider** | 45+部全文 | ❌ | 11个案例 | 有WIKI库的机构 |
+| **pkulaw-provider** | ✅ | ✅ | ❌ | 有北大法宝订阅 |
+
+### 降级行为
+
+- 无 wiki-provider → default-provider 兜底，产出标记 `⚠️ 仅3部核心法规`
+- 无 pkulaw-provider → Agent 1b 降级产出 `VERSION_UNVERIFIED`，管线不阻断
+- 完全无知识源 → 管线拒绝启动
+
+### 法规清单
+
+**纪律法规**（`${WIKI_PATH}/discipline/法规/`，共45部）:
 - 中国共产党纪律处分条例_2023修订
 - 中华人民共和国监察法_2024修正
 - 监察法实施条例_2025修订
@@ -746,7 +693,7 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 - 中国共产党问责条例_2019修订
 - 其他法规共计45部
 
-**医药行为规范**（`wiki/main/sources/medical/`，共8部）:
+**医药行为规范**（`${WIKI_PATH}/medical/`，共8部）:
 - 医疗机构从业人员行为规范
 - 医疗机构工作人员廉洁从业九项准则
 - 医务人员职业道德准则2025年版
@@ -756,7 +703,7 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 - 医务人员互联网健康科普负面行为清单
 - 医药代表管理办法-2026
 
-**指导性案例**（`wiki/main/sources/discipline/指导性案例/`，共11个）:
+**指导性案例**（`${WIKI_PATH}/discipline/指导性案例/`，共11个）:
 - 案例-公车私用私车公养
 - 案例-容错纠错-两因素分析
 - 案例-对抗组织审查-两因素分析
@@ -770,11 +717,73 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 - 案例-骗领惠民惠农补贴
 
 **分析方法论：**
-- `wiki/main/sources/discipline/方法论/违规+有责两因素分析方法论.md`
+- `${WIKI_PATH}/discipline/方法论/违规+有责两因素分析方法论.md`
 
 ---
 
 ## LEARNED PATTERNS
+
+### v2.0.0 — 双轮对抗辩论 + 类案结构化索引 (2026-07-17)
+**来源：** SOLO 655 评估 — 12次 LEARNED PATTERNS 中 3 次是认知盲区（单人自辩不可靠）；当前 11 个指导性案例靠关键词匹配无法精准参照。
+**核心设计：**
+
+**1. 双轮对抗辩论（Agent 3）：**
+- Round 1（检方）：正常分析 → 产出违规+有责+量纪
+- Round 2（辩护方）：角色切换，找 3 个最强反驳点 → 逐条论证成立性
+- rebuttal_matrix: 反驳点 + 强度(强/中/弱) + 成立性(成立/部分成立/驳回) + 理由 + 对结论的影响
+- REBUTTAL_PASS 标准：3 点全论证完毕 + 至少 1 个 VALID 或 PARTIALLY_VALID
+- 历史拦截力：可拦截 DI-20260716-001（虚假法条）和 DI-20260706-001（绝对化表述）的同类错误
+
+**2. 类案结构化索引：**
+- 新建 `references/case-index.json`：11 个指导性案例 × 7 维特征标签
+- 匹配维度：violation_type · violation_category · subject.level · amount.range · mental_state · penalty_severity
+- 纯规则匹配（不需语义模型）：2+ 维度重叠 → 70% 相似度
+- Agent 3 分析后构建 case_profile，自动匹配 Top 3 类案
+
+**3. 证据评分提案删除：**
+- SOLO 655 复核结论：双轮对抗辩论已覆盖证据评分的核心价值（辩护方反驳点自然暴露证据薄弱处）
+- 五星评分存在伪精确风险（谦逊为真），对抗辩论的"具体弱点+原因"比评分更精准
+
+**原则：** 用结构化的"换位思考"对抗认知盲区，而非堆叠新 Agent。双轮制 = 同一 Agent 跑两轮，符合压缩原则。
+**SOLO 655 复核：** 膨胀陷阱✅ — 不增加 Agent 数，双轮是流程优化而非规则堆叠。压缩✅ — 辩论矩阵固定格式，信息密度高。
+**文件：**
+- 新增: `references/case-index.json`（11案例结构化标签）
+- 修改: `agents/analyze.md`（双轮辩论+类案匹配）, `agents/draft.md`（七章含类案参照）, `agents/review.md`（+双轮辩论+类案审计项）, `agents/search-rg.md`（案例特征提取）
+- 修改: `SKILL.md`（v2.0版本号·Agent 3规格）
+
+### v1.5.0 — 管线并行化：0→(1a∥1b)→1c→2 (2026-07-17)
+**来源：** SOLO 655 评估 — 1a和1b输入源同属 Agent 0，无相互依赖，串行是历史设计而非必须。
+**核心设计：**
+- Agent 0 新增显式 `regulation_list` 字段，同时供给 1a（rg搜索）和 1b（pkulaw验证）
+- 1a 和 1b 并行执行，1c 做轻量合并（匹配+差异标记，不做分析）
+- 1b 输入从 agent1a 改为 agent0 — 解决"1a漏了某法规→1b就不会验证"的隐式耦合
+- 新增 `agents/merge.md` (Agent 1c)
+- Agent 2 输入从双源改为单源（agent1-merged.json）
+- 全模式 Agent 数 +1（full: 8→9, interview: 5→6, quick: 4→5）
+- 有效耗时: max(rg ~30s, pkulaw ~60s) + merge(10s) = 70s，对比串行90s节省22%
+**原则：** 消除隐式耦合优于增加并行度——1a→1b的regulation_list传递是脆弱点（1a遗漏=1b盲区），改为都读 Agent 0 更健壮。
+**SOLO 655 复核：** 膨胀陷阱✅ — 新增1c不是防御性堆叠，是消除隐式耦合的结构性改进。降熵✅ — 1c只做合并不做分析。
+**文件：**
+- 新增: `agents/merge.md` (Agent 1c)
+- 修改: `agents/scope.md` (新增regulation_list), `agents/search-pkulaw.md` (输入改为agent0), `agents/search-rg.md` (读regulation_list), `agents/audit.md` (输入改为agent1-merged)
+- 修改: `SKILL.md` (管线图·Phase描述·Solo Status·输出路径·Agent规格)
+
+### v1.4.0 — 三层解耦：知识源可插拔Provider架构 (2026-07-17)
+**来源：** DI skill was uploaded to GitHub but external users couldn't use it — missing WIKI regulation database and pkulaw-mcp.
+**核心设计：**
+- 法规数据层通过 Provider 接口与管线解耦
+- 新建 `providers/` 目录：接口规范 + default/wiki/pkulaw 三个 Provider
+- Agent 1a/1b 去硬编码路径，改用环境变量 `${WIKI_PATH}` / `${SKILL_DIR}`
+- Agent 1b 新增降级路径：pkulaw不可用时全标 `VERSION_UNVERIFIED`（不阻断管线）
+- Agent 2 新增 `degradation_mode` 判定：降级模式 PASS→PASS_WITH_WARNINGS
+- 默认知识包：3部核心法规全文（纪律处分条例+监察法+政务处分法）+ 方法论文档
+- `shared-config.yaml` de-hardcoded, replaced all `C:\Users\{user}` absolute paths with `${WIKI_PATH}` / `${SKILL_DIR}` env vars
+**原则：** 管线方法论是产品，法规数据是燃料——分开交付，各自配置。
+**文件：**
+- 新增: `providers/` (接口 + 3个provider配置 + 默认知识包)
+- 新增: `README.md` (开源项目首页)
+- 修改: `agents/search-rg.md`, `agents/search-pkulaw.md`, `agents/audit.md`
+- 修改: `SKILL.md` (Provider架构文档), `supervision-shared/shared-config.yaml`
 
 ### v1.1.0 — Agent 1a/1b 拆分：pkulaw 结构性不可跳过 (2026-07-16)
 **来源：** DI-20260716-001 复盘 — Agent 1 跳过 Step 1B 根因分析。即使加固了指令约束，单 Agent 内 rg+pkulaw 仍可能被跳过。拆分为 1a(rg WIKI) → 1b(pkulaw) 两个独立子会话后，1b 结构性独立存在——不可能被 1a 跳过。
@@ -804,7 +813,7 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 - 脱敏协议 ✓
 
 ### v1.0.1 — quick模式必须包含Audit (2026-07-06)
-**来源：** Domain Owner纠正：quick模式（法规咨询/条款查询）不可跳过Agent 2 Audit。
+**来源：** Corrected: quick mode (regulation consultation/article lookup) must not skip Agent 2 Audit.
 所有引用的法规条款必须经ripgrep原文比对验证后才可进入Publish阶段。
 **修改：** quick模式管线从 `0→1→7` 修正为 `0→1→2→7`。
 **移除项：**
@@ -813,7 +822,7 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 - xunshi模式从Guardrail路由移除
 
 ### v1.0.2 — 处分审批分类分析原则 (2026-07-06)
-**来源：** Domain Owner纠正 — DI-20260706-001中「所有党纪处分必须上党委会」表述不精确。警告/严重警告可由同级纪委审查批准（《批准权限和程序规定》第6条），不必上党委会。
+**来源：** Corrected — DI-20260706-001 analysis stated "all party disciplinary sanctions must go through party committee" — imprecise. Warning/severe warning can be approved by the discipline inspection commission at the same level (per Article 6 of Approval Authority and Procedures Regulations), not necessarily the party committee.
 **教训：** 涉及处分审批程序的问题，必须按**轻处分（警告/严重警告）vs 重处分（撤销党内职务以上）**两个维度拆解检索和分析。
 **交叉验证要求：** 涉及审批程序的问题必须**同时**检索以下两部法规并做交叉比对：
   - 《处分违纪党员批准权限和程序规定》（2022）→ 审批权限划分
@@ -829,9 +838,9 @@ node skills/solo-file-transfer/scripts/ima-upload.cjs <终版文件> <KB_ID>
 每个Agent完成后主会话read验证文件存在性，不存在则标记failed。
 
 **Suit硬执行：**
-纪律审查/案件定性/谈话提纲等关键词 → 第一步展示确认提示 → Domain Owner确认 → sessions_spawn Agent 0。
+纪律审查/案件定性/谈话提纲等关键词 → 第一步展示确认提示 → 领域所有者确认 → sessions_spawn Agent 0。
 
-> ⛔ 本技能为开源版本，已去除内部路径和身份信息。
+> ⛔ 本技能为保密专属，仅本地使用，不得上传 GitHub/ClawHub 或任何外部平台。
 
 ### v1.0.3 �� Agent 0 Step 0b ǰ��������֤ǿ�� (2026-07-08)
 **��Դ��** DI-20260708-001 ��Ʒ��� �� Agent 0 δִ��rg��֤���ٴ�ҽ���궨Ϊ'��ְ��Ա'��Υ����Դ+ǫѷ���ɣ����Ķȸ��֡�

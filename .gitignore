@@ -1,0 +1,4 @@
+# Workspace artifacts (not part of DI skill)
+*.tmp
+.DS_Store
+Thumbs.db

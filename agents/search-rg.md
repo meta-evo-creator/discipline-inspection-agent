@@ -1,29 +1,50 @@
-﻿# Agent 1a: Search-rg（WIKI法规搜索）— DisciplineInspection
+# Agent 1a: Search-rg（法规全文搜索）— DisciplineInspection
 
 ## 角色
-WIKI法规库搜索者。仅做 rg 本地搜索 + web 降级，**不做版本验证**。版本验证由 Agent 1b 独立完成。
+法规全文搜索者。根据 Provider 配置选择搜索源，**不做版本验证**。版本验证由 Agent 1b 独立完成。
 
 ## 输入
-`agent0-scope.json`（scope的 `downstream_handoff.agent1_search_terms`）
+- `agent0-scope.json`（scope 的 `downstream_handoff.agent1_search_terms` + `regulation_list`）
+- **Provider 配置**（自动检测，见下方 Provider 检测段）
+
+> 🔴 v1.5: 新增读取 `regulation_list` — Agent 0 已列出此案涉及的核心法规清单，Agent 1a 以此为搜索范围基础，不遗漏关键法规。
 
 ## 输出
 `agent1a-search-rg.json`
 
 ---
 
-## ⛔ 搜索行为强制约束
+## 🔌 Provider 检测（Agent 启动时首先执行）
 
-### Step 1 [MANDATORY·不可跳过] — WIKI本地法规库搜索
+在搜索之前，确定知识源配置：
 
 ```
-rg -n "关键词" $WORKSPACE\wiki\main\sources\discipline\法规\
-rg -n "关键词" $WORKSPACE\wiki\main\sources\medical\
-rg -n "关键词" $WORKSPACE\wiki\main\sources\discipline\指导性案例\
-rg -n "关键词" $WORKSPACE\wiki\main\sources\hospital-inspection\
-rg -n "关键词" $WORKSPACE\wiki\main\sources\inspection\
+1. 读取环境变量 WIKI_PATH → 非空且路径存在 → wiki-provider 可用
+2. 检查 providers/default/knowledge/ 目录存在 → default-provider 可用
+3. wiki-provider 可用 → 使用 wiki 路径（完整45+部法规）
+4. wiki-provider 不可用但 default-provider 可用 → 使用 default 路径（3部核心法规）
+5. 两者均不可用 → 阻断，报告给主会话
+```
+
+**确定 PROVIDER_BASE 后**，按 provider.yaml 中 `search.scopes` 映射搜索域。
+
+---
+
+## ⛔ 搜索行为强制约束
+
+### Step 1 [MANDATORY·不可跳过] — 法规库本地搜索
+
+```
+rg -n "关键词" ${PROVIDER_BASE}/discipline/法规/
+rg -n "关键词" ${PROVIDER_BASE}/medical/
+rg -n "关键词" ${PROVIDER_BASE}/discipline/指导性案例/  # 若无此目录→跳过
+rg -n "关键词" ${PROVIDER_BASE}/hospital-inspection/       # 若无此目录→跳过
+rg -n "关键词" ${PROVIDER_BASE}/inspection/                # 若无此目录→跳过
 ```
 
 必须产出: 法规/案例原文(一字不差) + 来源文件路径(绝对路径)
+
+**⚠️ 降级说明：** 若使用 default-provider，仅 `discipline/法规/` 下有3部法规，`指导性案例/`、`hospital-inspection/`、`inspection/` 目录不存在——跳过对应 rg 命令，不影响管线运行。
 
 **⛔ 条款号防幻觉规则（强制执行）：**
 - 每个条款号必须从 rg 输出中**直接提取**，不得凭记忆编造/推算
@@ -32,28 +53,49 @@ rg -n "关键词" $WORKSPACE\wiki\main\sources\inspection\
 
 ### Step 1A [省级法规搜索·不可跳过]
 
-任务涉及广东省机构和人员时，必须搜索省级法规:
+任务涉及地方机构和人员时，必须搜索省级法规:
 ```
-rg -n "关键词" $WORKSPACE\wiki\main\sources\inspection\ --include "*粤府令*" --include "*广东省*" --include "*地方性法规*" -i
+rg -n "关键词" ${PROVIDER_BASE}/inspection/ --include "*省*" --include "*地方性法规*" -i
 ```
 
-若rg未命中 → web_search补充: `search "site:gov.cn 广东省 [法规领域] 办法"`
-获取全文后下载至 wiki/main/sources/inspection/ 再引用
+若rg未命中 → web_search补充: `search "site:gov.cn [省份] [法规领域] 办法"`
+获取全文后保存至 `${PROVIDER_BASE}/inspection/` 再引用
+（default-provider 无 inspection 目录 → 需先创建目录再下载保存）
 
 ### Step 2 [仅当Step 1+1A覆盖不足]
 
 执行（按优先级）:
-1. Tavily/web_search → 政府网站法规搜索
-2. babata-search → 最新指导性案例/方法论
+1. web_search → 政府网站法规搜索（`site:gov.cn OR site:ccdi.gov.cn`）
+2. web_search → 最新指导性案例/方法论
 限制: 最多3组关键词
+
+**⚠️ 降级说明：** 使用 default-provider 时 Step 1 仅3部法规，Step 2 的 web_search 补充更加重要。
+从 web 获取的法规文本需标注 `[UNCERTAIN: 来源非官方]`（若来自第三方网站）。
 
 ---
 
 ## ⛔ 禁止
 - 跳过Step 1直接做web搜索
-- 用web_fetch打开百度/微信文章
 - 凭记忆引用条款号/案例
 - 条款号从rg输出外自行编造/推算（❗幻觉防范）
+
+## 📊 Provider 能力标记
+
+产出文件 `agent1a-search-rg.json` 的 `provider_info` 字段必须记录:
+```json
+{
+  "provider_info": {
+    "provider_name": "wiki-provider | default-provider",
+    "provider_capabilities": {
+      "regulation_count": 45,
+      "case_search": true,
+      "methodology_access": true
+    },
+    "degradation_note": "仅3部核心法规 · 无指导性案例 "
+  }
+}
+```
+此字段供 Agent 2 Audit 判断：若 regulation_count < 10 → 降低案例完整性检查的严格度。
 
 ---
 
@@ -82,20 +124,33 @@ rg -n "关键词" $WORKSPACE\wiki\main\sources\inspection\ --include "*粤府令
 ```
 **🔴 source_line 为必填字段。无 source_line 的引用 → Agent 2 Audit 标记 UNSOURCED → FAIL**
 
-### regulation_list 🔴 必填（供 Agent 1b 使用）
+### regulation_list 🔴 必填
 ```json
 ["法规完整名称1", "法规完整名称2", ...]
 ```
-**从 legal_provisions 中提取所有引用法规的完整名称，去重后形成此列表。Agent 1b 将读取此列表逐一进行 pkulaw 版本验证。**
+**从 legal_provisions 中提取所有引用法规的完整名称，去重后形成此列表。供 Agent 1c Merge 做三向匹配基准验证。**
 
-### guiding_cases
+> v1.5: regulation_list 不再供 Agent 1b 使用（1b 直接从 Agent 0 读取），保留此字段供 Agent 1c 交叉验证。
+
+### guiding_cases（v2.0: 含结构化特征提取）
+
+除基础信息外，v2.0 新增 `case_features` 字段供 Agent 3 类案匹配：
+
 ```json
 {
   "batch": "批次",
   "case_id": "编号",
   "core_facts": "核心事实",
   "conclusion": "处理结论",
-  "reference_value": "参考价值"
+  "reference_value": "参考价值",
+  "case_features": {
+    "violation_type": "违规类型",
+    "violation_category": ["违规子类别"],
+    "subject_level": "科级/处级/厅级",
+    "amount_range": "5千以下/5千-1万/1万-5万/5万以上/无金额",
+    "mental_state": "明知故犯/过失/推动发展意图",
+    "penalty_severity": "轻处分/重处分以下/重处分+刑事"
+  }
 }
 ```
 

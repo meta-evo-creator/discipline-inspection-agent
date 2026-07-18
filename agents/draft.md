@@ -42,6 +42,19 @@ Triggers: Involved cash whereabouts unknown / Single transaction ≥20,000 yuan 
 ### Guardrail 2: Regulation Number Cross-Reference
 2 or more issues → Each item annotated with `(Applicable: Item X/Item Y)`
 
+### Guardrail 3: Signature Subject Three-Layer Distinction ⛑️ (2026-07-18 from PC-004)
+When drafting sanction/disciplinary action documents, distinguish three tiers of signatories:
+
+| Tier | Role | What They Sign | Nature |
+|:-----|:-----|:--------------|:------|
+| **Decision Layer** | Party committee (collective) **OR** principal leader (individual) | Admonishment decision (meeting minutes) | ✅ Approval |
+| **Confirmation Layer** | Admonished person | Interview record verification signature | ❌ Confirmation only |
+| **Archive Layer** | Admonished person's party branch secretary | Confirmation that self-criticism is factual | ❌ Archive only |
+
+⛑️ **"Principal leader of the party organization to which the person belongs" (Inner-Party Supervision Regulations Art. 21) = The party branch secretary of the department/section the person belongs to, NOT the hospital party secretary.** In the three-tier structure of public hospitals (Party Committee → General Party Branch → Party Branch), this level mapping is the most error-prone.
+
+**"Or" = mutually exclusive**: If a party committee meeting resolution exists, no separate individual leader approval is required. The regulation's "or" means one or the other, not both.
+
 ## ⛔ Mandatory Pre-requisite
 Confirm that agent3-analyze.json contains the `methodology_version` field. Missing → return to Agent 3.
 

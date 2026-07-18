@@ -58,6 +58,21 @@ When the task involves local agencies and personnel, provincial regulations must
 rg -n "keyword" ${PROVIDER_BASE}/inspection/ --include "*province*" --include "*local regulation*" -i
 ```
 
+### Step 1.5 [Subject Element Gate ⛔ · Cannot Skip · 2026-07-18 from PC-001]
+
+**rg keyword match ≠ regulation applicability.** For every regulation hit from Step 1, MUST read the first 3 articles to verify the subject falls within the regulation's scope of application.
+
+```
+# For each matched regulation, verify subject scope:
+rg -n "第[一二三]条|Article [123]" <regulation_file_path>
+```
+
+**Gate logic:**
+- Article 6 of Regulation X describes the same conduct as Article 14, but different subject → gate catches this discrepancy
+- The article number difference often IS the subject element difference
+- If subject mismatch detected → mark `[SUBJECT_MISMATCH: Article X applies to <scope>, not <subject>]`
+- **Prohibited:** Citing an article based solely on behavioral description match without verifying subject scope
+
 If rg yields no hits → supplement with web_search: `search "site:gov.cn [province] [regulation domain] measures"`
 After obtaining full text, save to `${PROVIDER_BASE}/inspection/` before referencing
 (default-provider has no inspection/ directory → directory must be created before downloading and saving)

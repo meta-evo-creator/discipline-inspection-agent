@@ -52,6 +52,34 @@ Passing criterion: **All three questions must have tool invocation records** for
 | Amount Involved | Financial amount or equivalents | Approximately 500,000 yuan |
 | Scenario Type | Discipline review / Administrative sanction / Petition verification / Interview reminder / Accountability | Discipline review |
 
+## Step 2b Identity-to-Regulation Mapping ⛔ (2026-07-18 from PC-006)
+After Step 0b identity verification, automatically map to applicable regulation framework:
+
+| Identity Combination | Applicable Regulations | Common in Hospital Settings |
+|:-------------------|:----------------------|:---------------------------|
+| CCP member + Public official | Disciplinary Punishment Regulations + Administrative Discipline Law | Hospital leaders, department heads who are CCP members |
+| Democratic party member + Public official | Administrative Discipline Law + Public Institution Personnel Regulations | Democratic party physicians, non-CCP managers |
+| Non-CCP + Non-public-official | Public Institution Personnel Regulations | Regular medical staff without public official status |
+| Public official only (non-CCP) | Administrative Discipline Law | Non-CCP administrative staff |
+
+**Mapping rule**: identity determines which regulations apply → write to scope.json as `identity_regulation_map` field.
+
+## Step 2c Approval Hierarchy Reference ⛔ (2026-07-18 from PC-003)
+
+When the task involves sanction/reprimand approval questions, distinguish between NON-disciplinary measures and disciplinary sanctions — they have entirely different approval levels.
+
+| Measure Type | Nature | Approval Authority | Legal Basis |
+|:-------------|:------|:-------------------|:-----------|
+| **Conversation Reminder / Criticism Education** | First Form (non-sanction) | Relevant responsible person of discipline inspection organ | Supervision Rules Art. 10 |
+| **Admonishment Conversation** (诫勉谈话) | Organizational handling (non-sanction) | Proposed by HR Dept → **approved by Party Committee (Secretary)** | Organization Dept Doc [2015] No. 12 Art. 14 |
+| **Warning / Serious Warning** | Light party disciplinary sanction | **Discipline Inspection Commission at the same level** (no Party Committee needed) | Approval Authority Regs Art. 6 |
+| **Removal from Party Posts and above** | Heavy party disciplinary sanction | Discipline Commission review → **Party Committee approval** | Party Constitution Art. 42 |
+
+**Core distinction:**
+- "Collective discussion decision" ≠ "Party Committee meeting" — must distinguish between "Discipline Commission Standing Committee collective discussion" and "Party Committee collective discussion" scenarios
+- **Avoid absolute statements**: "All sanctions must go through Party Committee" is WRONG — warning/severe warning are approved by the Discipline Commission at the same level
+- Write this mapping to scope.json as `approval_hierarchy_table` field
+
 ## Step 3 Fact Pattern Recognition
 - Match against known violation type database (rg wiki/ assistance, not hardcoded)
 - Annotate certainty level of key fact elements (Confirmed / Requires verification / To be supplemented)

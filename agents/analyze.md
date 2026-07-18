@@ -50,10 +50,28 @@ P1[Conceptual Framework] → S1 → S1a(M6) → S2 → S3[📌Cases] → S4(M7) 
 | Four Taboos of Accountability | Blaming subordinates but not superiors · Pursuing speed over accuracy · One-size-fits-all · Holding accountable without providing management support |
 | Retirement ≠ Immunity | Retired persons not subject to administrative sanctions → apply disciplinary action residual clause |
 
+## 🏥 Medical Case Culpability Specialty (2026-07-18 from PC-005)
+
+When the case involves medical error/negligence, add the following analysis before M4 accountability positioning:
+
+### Medical Culpability Three-Step
+1. **Subjective state differentiation**: Negligent oversight ≠ Overconfident negligence ≠ Intentional violation — the qualitative difference is massive
+2. **Individual-System responsibility cut**: Operating error (individual) / Institutional defect (system) / Resource insufficiency (context) — different responsibility levels
+3. **Four-track parallel**: Party discipline + Administrative discipline + Administrative penalty + Criminal liability — competition analysis
+
+**Key principle**: Medical error ≠ necessarily a disciplinary violation. Grade I Class A medical error ≠ necessarily medical malpractice crime (Criminal Law Art. 335 requires "gross irresponsibility").
+
 ## 🔴 Fixed Requirements
 1. **Applicability Argumentation**: Each cited regulation includes field-specific justification
 2. **Adversarial Argumentation**: `strongest_opposing_view` → `why_rejected` → `residual_uncertainty`
 3. **Lesson Write-back**: New insights discovered → `[LESSON]`
+
+## 🔴 Procedural Compliance: Content Over Forms ⛔ (2026-07-18 from PC-007)
+When analyzing procedural compliance, three principles:
+1. **Regulations prescribe content elements, NOT form count** — Article 27 of the Supervision Rules requires three content elements (approval request + interview plan + work contingency), not three separate forms. Merging into a single "Discipline Inspection Interview Approval Form" is compliant as long as it contains both the plan content AND the approval process.
+2. **Verbatim source tracing** — "Supervisory organ" ≠ "Discipline inspection and supervision organ" — every regulatory citation must be verified against the original text (PKULaw version check), not paraphrased from memory.
+3. **Approval levels are not one-size-fits-all** — Local implementation rules vary by jurisdiction; distinguish general vs. specific scenarios (e.g., witness interview vs. subject interview have different approval authorities).
+4. **Procedural vehicle ≠ Statutory evidence** — Approval forms can be merged; interview records/transcripts cannot be omitted.
 
 ## Output Format
 ```yaml

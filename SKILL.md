@@ -118,7 +118,7 @@ Before and after each Agent spawn, update `./solo/pipeline-status.json`.
 {
   "pipeline_id": "DI-YYYYMMDD-xxx",
   "skill": "discipline-inspection",
-  "version": "2.0.0",
+  "version": "2.3.0",
   "topic": "Issue summary",
   "started_at": "ISO timestamp",
   "last_updated": "ISO timestamp",
@@ -286,6 +286,8 @@ Do not restate file content or write summaries. The main session will read the f
 
 ### Agent 1c: Merge (Regulation Search Merge · v1.5 New) 🔀
 
+> **Note:** Agent 1c is an inline merge phase — no standalone `agents/merge.md` file. Merge logic is embedded in the pipeline flow.
+
 **Input:** `agent0-scope.json` + `agent1a-search-rg.json` + `agent1b-search-pkulaw.json`
 **Output:** `agent1-merged.json`
 
@@ -363,19 +365,59 @@ Write output to file. Final reply must be exactly one line: `DONE <output_file_p
 
 ---
 
-### Agent 3: Analyze (Deep Analysis · v2.3 Dual-Round Adversarial Debate + Case Matching)
+### Agent 3: Analyze (Deep Analysis · v2.3 P1+P2 Framework + Dual-Round Debate + Case Matching)
 
 **Input:** `agent0-scope.json` + `agent1-merged.json` + `agent2-audit.json`
 **Output:** `agent3-analyze.json` (full mode) / `agent4-draft.md` (interview mode — writes outline directly)
 
+> 🔴 v2.3: P1 Policy Framework (4 conceptual frameworks) + P2 Procedural Guidance (4 rules) as analysis backbone.
 > 🔴 v2.3: Dual-round adversarial debate protocol — Round 1 Prosecution analysis + Round 2 Defense challenge (3 rebuttal point matrix).
 > 🔴 v2.3: Case matching — rule-based matching using structured tags from `references/case-index.json`.
-> v1.5: Input changed from dual-source to single-source (agent1-merged).
 
 **Analysis methodology: Violation + Responsibility Two-Factor Analysis Framework v2.3**
 
-> Methodology source: `wiki/main/sources/discipline/methodology/violation-responsibility-two-factor-analysis-methodology.md`
+> Methodology source: `${WIKI_PATH}/sources/discipline/methodology/`
 > Embedded from Central Commission for Discipline Inspection enforcement guidance case methodology.
+
+**⛔ Mandatory Prerequisite:** Before execution, MUST load the full methodology text via `rg` from `${WIKI_PATH}`.
+
+#### 🔴 P1 Policy Framework Matching (v2.3 New — Analysis Backbone — Execute Before S1)
+
+Match the case facts against one or more conceptual frameworks before violation determination:
+
+| Framework | Core Question |
+|:----------|:-------------|
+| **Three Distinctions** (三个区分开来) | For public interest or private gain? Exploratory mistake or knowing violation? Inadvertent error or intentional wrongdoing? |
+| **From Style to Corruption** (由风变腐) | Is this evolving from a conduct issue into corruption? |
+| **Substance Over Form** (虚浮辨识) | Work negligence or misplaced performance metrics? |
+| **Look Beyond Appearances** (透过现象看本质) | Was the "donation" truly voluntary, or coerced by authority? |
+
+**Case facts → select one or combine → use as backbone for two-factor analysis → report header annotates matched framework**
+
+#### 🔴 P2 Procedural Guidance (v2.3 New — Append After S10)
+
+| Rule | Applicable Scenario |
+|:-----|:-------------------|
+| **Sanction Matching** | Grassroots autonomous organization personnel cannot receive administrative heavy sanctions → supplement with resignation/suspension of allowances |
+| **Asset Disposal (4 Types)** | Confiscation · Recovery · Seizure · Restitution → select method based on fund source |
+| **Accountability (4 Pitfalls)** | Asking subordinates but not superiors · Speed over accuracy · One-size-fits-all · Accountability without management |
+| **Retirement ≠ Immunity** | Retired individuals cannot receive administrative discipline → apply party discipline catch-all clause |
+
+#### Analysis Workflow (11 Steps with Embedded Modules)
+
+```
+P1[Conceptual Framework] → S1 → S1a(M6) → S2 → S3[Guiding Cases] → S4(M7) → S5 → S7(M2) → S8(M4+M8) → S9(M9) → S10[Guiding Cases+P2 Procedural Guidance] → S11
+```
+
+| Step | Mandatory Check | Source |
+|:-----|:---------------|:-------|
+| **P1** | Conceptual framework match: select one or combine from 4 frameworks | §P1 |
+| **S1a** | M6 Swiss Cheese Audit: five-layer defense perforation review | §M6 |
+| **S4** | M7 Attribution Calibration: three self-checks | §M7 |
+| **S7** | M2 Signal Audit: weak signals require 2+ sources | §M2 |
+| **S8** | M4 Accountability Positioning + M8 Just Culture: Tier 1 split A/B/C | §M4 §M8 |
+| **S9** | M9 Scapegoat Audit: three scapegoat risk checks | §M9 |
+| **S10** | Qualitative conclusion + sanction recommendation → append P2 Procedural Guidance | §P2 |
 
 ```
 ┌───────────────────────────────────────────────────────────┐
@@ -441,74 +483,24 @@ Agent 3 must construct the strongest opposing viewpoint and rebut each point. Th
 2. **why_this_view_is_rejected**: Specific reasons the argument is dismissed (cite regulations + facts)
 3. **residual_uncertainty**: Remaining uncertainty even after dismissal
 
-```json
-{
-  "analysis": {
-    "violation_factor": {
-      "behavior_description": "Objective description of subject's conduct",
-      "applicable_regulations": [
-        {
-          "law": "Regulation name",
-          "article": "Article number",
-          "violation_type": "Type of violation",
-          "applicability_argument": "[Applicability argument]"
-        }
-      ],
-      "protected_interests": "Disciplinary/legal interests harmed",
-      "continuity": "One-time/occasional/persistent/systematic",
-      "severity": {
-        "amount": "Amount involved",
-        "frequency": "Frequency",
-        "scope": "Scope of impact",
-        "consequence": "Social consequences"
-      }
-    },
-    "responsibility_factor": {
-      "subjective_state": "Direct intent/indirect intent/negligence",
-      "knowledge_level": "Knowing/should have known/could not reasonably be expected to know",
-      "motive": "Personal gain/organizational interest/external pressure/other",
-      "post_behavior": "Voluntary correction and restitution/passive/resistant and uncooperative",
-      "identity_weight": "Impact of party member/public official identity on duty of care"
-    },
-    "comprehensive_assessment": {
-      "violation_established": true,
-      "responsibility_established": true,
-      "penalty_range": "Sanction grade range",
-      "aggravating_factors": ["Aggravating factors"],
-      "mitigating_factors": ["Mitigating factors"],
-      "recommended_disposition": "Recommended sanction grade"
-    }
-  },
-  "premise_declaration": {
-    "assumptions": [
-      "Premise 1 (identity): Subject's regulatory identity is ______ [Source: rg verification: ______]",
-      "Premise 2: ______ [Source: rg verification: ______]",
-      "Premise 3: ______ [Source: rg verification: ______]"
-    ],
-    "sensitivity": "How conclusions change if premises are invalid"
-  },
-  "counter_argument": {
-    "strongest_opposing_view": "Strongest exculpatory argument",
-    "why_this_view_is_rejected": "Reasons for rejection",
-    "residual_uncertainty": "Remaining uncertainty"
-  },
-  "case_references": [
-    {
-      "case_id": "Case number",
-      "similarity": "Similarity level",
-      "reference_value": "Reference value"
-    }
-  ],
-  "evidence_chain": [
-    {
-      "element": "Violation/responsibility element",
-      "evidence": ["Supporting evidence"],
-      "gap": "Relies on confession / has evidence"
-    }
-  ],
-  "unsourced_claims": 0,
-  "confidence": "high | medium | low"
-}
+```yaml
+审查分析_v2.3:
+P1概念框架: [Three Distinctions / From Style to Corruption / Substance Over Form / Look Beyond Appearances]
+一、基本事实: [Subject / Facts / Regulations]
+二、事实认定: Violation[✅/❌] M6[Perforation Layer] M7[Bias] Culpability[...] Exculpatory[...]
+三、案例比对: S3 uses similar_cases; S10 uses direct_precedent
+四、对抗论证: counter_case strongest_opposing_view/why_rejected/residual_uncertainty
+五、增强分析: M2[Reliability] M4[Tier X] M8[A/B/C/--]
+六、结论: M9[Risk] Characterization:[...] Disposition:[...]
+七、P2程序指引: [Sanction Matching / Asset Disposal / Accountability Pitfalls / Retirement Rule]
+八、制度改进: [Recommendations]
+```
+
+**🔴 Fixed Requirements:**
+1. **Applicability Argumentation**: Every cited regulation must include the applicability_argument field
+2. **Adversarial Argumentation**: `strongest_opposing_view` → `why_rejected` → `residual_uncertainty`
+3. **Lesson Write-back**: When new patterns discovered → annotate `[LESSON]`
+4. **Guiding Case Consumption**: Case matching only for factual similarity comparison, not principle derivation (principles derived from P1+P2)
 ```
 
 ## ⚠️ Output rules
@@ -733,6 +725,38 @@ Pipeline startup selects knowledge source in the following priority:
 ---
 
 ## LEARNED PATTERNS
+
+### v2.3.0 — P1 Policy Framework + P2 Procedural Guidance + Inline Merge (2026-07-17)
+**Source:** Methodology evolution — the base two-factor analysis needed a higher-level conceptual framework and procedural guidance layer.
+**Core design:**
+
+**1. P1 Policy Framework (4 Conceptual Frameworks):**
+- Three Distinctions (三个区分开来): Public interest vs. private gain · Exploration vs. knowing violation · Inadvertent error vs. intentional wrongdoing
+- From Style to Corruption (由风变腐): Is conduct evolving into corruption?
+- Substance Over Form (虚浮辨识): Work negligence vs. misplaced performance metrics
+- Look Beyond Appearances (透过现象看本质): Coerced donation vs. voluntary?
+- Case facts → select framework → use as analysis backbone → annotate in report header
+
+**2. P2 Procedural Guidance (4 Rules):**
+- Sanction Matching: Grassroots personnel cannot receive administrative heavy sanctions
+- Asset Disposal (4 Types): Confiscation · Recovery · Seizure · Restitution
+- Accountability (4 Pitfalls): Asking subordinates not superiors · Speed over accuracy · One-size-fits-all · Accountability without management
+- Retirement ≠ Immunity: Retired personnel → party discipline catch-all clause
+
+**3. Agent 1c Merge Inline:**
+- Removed standalone `agents/merge.md` — merge logic embedded in pipeline flow
+- Pipeline still has merge phase (1a+1b→merged→audit), just no separate agent file
+- Agent count: 9→8 (full), 6→5 (interview), 5→4 (quick)
+
+**4. Agent 3 Output Format:**
+- Switched from JSON to YAML format for better readability of analysis structure
+- 8-chapter output: P1 Framework → Basic Facts → Fact Determination → Case Comparison → Adversarial Argument → Enhanced Analysis → Conclusion → P2 Guidance → Institutional Improvement
+
+**Files:**
+- Modified: `agents/analyze.md` (P1+P2 framework + 11-step workflow + YAML output)
+- Deleted: `agents/merge.md` (merge logic inline)
+- Modified: `SKILL.md` (v2.3 version number · Agent 3 specification · Agent counts)
+- Modified: `README.md` (agent count · directory structure)
 
 ### v2.0.0 — Dual-Round Adversarial Debate + Structured Case Indexing (2026-07-17)
 **Source:** SOLO 655 Assessment — 3 out of 12 LEARNED PATTERNS were cognitive blind spots (single-person self-debate is unreliable); the current 11 guiding cases cannot be precisely referenced via keyword matching alone.

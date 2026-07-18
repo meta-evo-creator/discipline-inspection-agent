@@ -2,7 +2,7 @@
 name: discipline-inspection
 version: 2.5.1
 description: |
-  Discipline Inspection v2.5.1 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1/P2 Framework + 9-Agent Full-Gate Pipeline + Resilience + LESSON(urgency routing) + Quality Dashboard + KG Activation + Agent Tuning + KG Writeback. Focused on party discipline inspection case analysis.
+  Discipline Inspection v2.5.1 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1/P2 Framework + 10-Agent Full-Gate Pipeline + Resilience + LESSON(urgency routing) + Quality Dashboard + KG Activation + Agent Tuning + KG Writeback. Focused on party discipline inspection case analysis.
 platforms:
   - openclaw
 tools:
@@ -15,7 +15,7 @@ metadata:
     emoji: ⚔️
 ---
 
-# Discipline-Inspection ⚔️ v2.5.0
+# Discipline-Inspection ⚔️ v2.5.1
 
 > **Discipline as the yardstick, vigilance as constant.** 10-Agent Full-Gate Pipeline + Schema Gates (100% coverage) + Pipeline Resilience + LESSON Collection + Quality Dashboard + Knowledge Graph Enrichment + Agent Tuning + Case Ruling Logic (L1/L2/L3).
 > 🔓 Open source under MIT License.

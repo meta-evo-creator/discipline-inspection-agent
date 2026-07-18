@@ -37,7 +37,7 @@ With configuration, the pipeline unlocks 45+ regulations + PKULaw version verifi
 | Tier | No Knowledge Source | Default Pack | Full WIKI + PKULaw |
 |:--:|:--------------------|:-------------|:-------------------|
 | 🥇 **Methodology** | ✅ Dual-factor / 24-char scoring | — | — |
-| 🥈 **Pipeline Architecture** | ✅ 8-Agent Handoff / Guardrail Routing | — | — |
+| 🥈 **Pipeline Architecture** | ✅ 10-Agent Full-Gate / Guardrail Routing | — | — |
 | 🥉 **Runnable Instance** | — | ✅ 3 regulation demo | ✅ 45+ regs + cases + version verify |
 
 ---
@@ -73,7 +73,7 @@ The pipeline is decoupled from the regulation data layer via a **Provider interf
 
 ```
 ┌─────────────────────────────────────────┐
-│         DI 8-Agent Pipeline             │
+│         DI 10-Agent Pipeline            │
 │  (methodology + analysis + scoring)     │
 └──────────┬─────────────┬────────────────┘
            │             │

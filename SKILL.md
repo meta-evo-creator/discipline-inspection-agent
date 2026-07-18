@@ -295,7 +295,6 @@ Do not restate file content or write summaries. The main session will read the f
 - Three-way matching per regulation (rg hit + pkulaw verification status)
 - Discrepancy markers: rg hit but pkulaw unverified → UNVERIFIED; rg miss but pkulaw has record → search_miss
 - Does not modify 1a/1b outputs, only merges + tags
-- See `agents/merge.md` for details
 
 ---
 

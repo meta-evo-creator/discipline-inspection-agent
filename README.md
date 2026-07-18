@@ -1,6 +1,6 @@
 # Discipline-Inspection ⚔️ v2.3
 
-> **Discipline as the yardstick. Constant vigilance.** 9-Agent parallel pipeline (1a∥1b) × Dual-Round Adversarial Debate × Case Structured Index (11 cases) × 6 Enhancement Modules × 24-Character Guideline scoring.
+> **Discipline as the yardstick. Constant vigilance.** 8-Agent parallel pipeline (1a∥1b) × Dual-Round Adversarial Debate × Case Structured Index (11 cases) × 6 Enhancement Modules × 24-Character Guideline scoring.
 
 An AI-powered case analysis engine for party discipline inspection: feed in case facts → parallel regulation search + version verification → merge → audit → dual-round adversarial analysis with case matching → draft → review → finalized output.
 
@@ -60,9 +60,9 @@ Phase 7: Publish         → Finalized output
 ```
 
 **Guardrail-routed modes:**
-- `full`: Case qualification / sanction recommendation (9 Agents)
-- `interview`: Interview outline (6 Agents)
-- `quick`: Regulation consultation / article lookup (5 Agents)
+- `full`: Case qualification / sanction recommendation (8 Agents)
+- `interview`: Interview outline (5 Agents)
+- `quick`: Regulation consultation / article lookup (4 Agents)
 
 ---
 
@@ -115,11 +115,10 @@ See: [`providers/regulation-source.interface.md`](providers/regulation-source.in
 discipline-inspection-agent/
 ├── SKILL.md                    # Full skill specification
 ├── README.md                   # This file
-├── agents/                     # 9 Agent prompts
+├── agents/                     # 8 Agent prompts
 │   ├── scope.md
 │   ├── search-rg.md
 │   ├── search-pkulaw.md
-│   ├── merge.md                # v1.5: parallel merge
 │   ├── audit.md
 │   ├── analyze.md              # v2.3: dual-round debate + case matching
 │   ├── draft.md

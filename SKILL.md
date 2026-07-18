@@ -17,7 +17,7 @@ metadata:
 
 # Discipline-Inspection ⚔️ v2.3.0
 
-> **Discipline as the yardstick, vigilance as constant.** 9-Agent File-based Handoff Pipeline + Violation + Responsibility Two-Factor Analysis + Twenty-Four-Character Policy 6-Dimension Review Scoring Matrix.
+> **Discipline as the yardstick, vigilance as constant.** 8-Agent File-based Handoff Pipeline + Violation + Responsibility Two-Factor Analysis + Twenty-Four-Character Policy 6-Dimension Review Scoring Matrix.
 > Isomorphic architecture with DR v4.0.
 > 🔓 Open source under MIT License. For production use, configure a regulation knowledge base (WIKI_PATH) and optional PKULaw version verification.
 
@@ -140,7 +140,7 @@ Before and after each Agent spawn, update `./solo/pipeline-status.json`.
 
 ---
 
-## 9-Agent Parallel Pipeline (Routed by Mode)
+## 8-Agent Parallel Pipeline (Routed by Mode)
 
 ```
 Phase 0: Scope       → Agent 0: Issue scoping                → agent0-scope.json
@@ -168,9 +168,9 @@ Phase 7: Publish   → Main session: solo-file-transfer        → IMA knowledge
 
 | Mode | Trigger Scenario | Pipeline | Agents |
 |:-----|:-----------------|:---------|:------:|
-| **full** | Case characterization, sanction recommendation | 0→(1a∥1b)→1c→2→3→4→5→6→7 | 9+1 |
-| **interview** | Interview outline | 0→(1a∥1b)→1c→2→3+4→7 (Analyze+Draft merged) | 6+1 |
-| **quick** | Regulatory consultation, article lookup | 0→(1a∥1b)→1c→2→7 | 5+1 |
+| **full** | Case characterization, sanction recommendation | 0→(1a∥1b)→1c→2→3→4→5→6→7 | 8+1 |
+| **interview** | Interview outline | 0→(1a∥1b)→1c→2→3+4→7 (Analyze+Draft merged) | 5+1 |
+| **quick** | Regulatory consultation, article lookup | 0→(1a∥1b)→1c→2→7 | 4+1 |
 
 **Routing decision point:** After Agent 0 Scope completes, the main session selects mode based on `task_type`.
 

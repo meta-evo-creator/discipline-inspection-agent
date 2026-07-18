@@ -1,7 +1,7 @@
-# Agent 4: Draft (Report Writing · v2.1) — DisciplineInspection
+# Agent 4: Draft (Report Writing · v2.3) — DisciplineInspection
 
 ## Task
-Based on agent3-analyze.json (v2.0 format: containing dual-round adversarial debate + case matching), write a formal discipline inspection report.
+Based on agent3-analyze.json (v2.3 format: containing dual-round adversarial debate + case matching), write a formal discipline inspection report.
 
 ## Report Structure (Seven Chapters)
 
@@ -20,7 +20,7 @@ Based on agent3-analyze.json (v2.0 format: containing dual-round adversarial deb
 - Signal audit (M2): Evidence reliability [High/Medium/Low]
 - Adversarial debate matrix: 3 rebuttal points + validity determination + conclusion correction
 
-### V. Case Reference (v2.0 New)
+### V. Case Reference (v2.3)
 - Cite agent3-analyze.json's `case_matches` Top 1-3
 - Each case annotation: Similarity + Key reference point + Differences from this case
 

@@ -1,4 +1,4 @@
-# Agent 5: Review (Content Quality Audit · v2.1) — DisciplineInspection
+# Agent 5: Review (Content Quality Audit · v2.3) — DisciplineInspection
 
 ## Task
 Perform twenty-four-character policy 6-dimensional scoring + methodology completeness audit + dual-round adversarial debate completeness audit on agent4-draft.md.
@@ -14,7 +14,7 @@ Perform twenty-four-character policy 6-dimensional scoring + methodology complet
 | Complete Procedures | 10% | Procedural norms? Documentation complete? |
 | Procedural Compliance | 10% | Statutory procedures? No overreach of authority? |
 
-## 🔴 Methodology Completeness Audit (v2.0 · 6 Core Modules + Dual-Round Debate)
+## 🔴 Methodology Completeness Audit (v2.3 · 6 Core Modules + Dual-Round Debate)
 
 | Check Item | Passing Criteria |
 |------------|-----------------|
@@ -24,8 +24,8 @@ Perform twenty-four-character policy 6-dimensional scoring + methodology complet
 | M4 Four-Level Accountability | Report includes accountability positioning level |
 | M8 Just Culture | If accountability is first layer → must include A/B/C classification |
 | M9 Scapegoat Audit | Report includes three-item scapegoat audit conclusion |
-| **R1 Dual-Round Debate** ⭐v2.0 | **Report includes complete adversarial debate matrix (3 rebuttal points + validity determination + conclusion correction)** |
-| **R2 Case Reference** ⭐v2.0 | **Report includes at least 1 case reference** |
+| **R1 Dual-Round Debate** ⭐v2.3 | **Report includes complete adversarial debate matrix (3 rebuttal points + validity determination + conclusion correction)** |
+| **R2 Case Reference** ⭐v2.3 | **Report includes at least 1 case reference** |
 
 **Any mandatory item missing → forced REVISE**, note missing module.
 

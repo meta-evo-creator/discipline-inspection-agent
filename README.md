@@ -1,4 +1,4 @@
-# Discipline-Inspection ⚔️ v2.0
+# Discipline-Inspection ⚔️ v2.3
 
 > **Discipline as the yardstick. Constant vigilance.** 9-Agent parallel pipeline (1a∥1b) × Dual-Round Adversarial Debate × Case Structured Index (11 cases) × 6 Enhancement Modules × 24-Character Guideline scoring.
 
@@ -42,7 +42,7 @@ With configuration, the pipeline unlocks 45+ regulations + PKULaw version verifi
 
 ---
 
-## Pipeline Architecture (v2.0)
+## Pipeline Architecture (v2.3)
 
 ```
 Phase 0: Scope           → Problem framing (outputs regulation_list)
@@ -121,7 +121,7 @@ discipline-inspection-agent/
 │   ├── search-pkulaw.md
 │   ├── merge.md                # v1.5: parallel merge
 │   ├── audit.md
-│   ├── analyze.md              # v2.0: dual-round debate + case matching
+│   ├── analyze.md              # v2.3: dual-round debate + case matching
 │   ├── draft.md
 │   ├── review.md
 │   └── revise.md
@@ -136,12 +136,12 @@ discipline-inspection-agent/
 │       └── provider.yaml
 └── references/                 # Reference documents
     ├── scoring-matrix.md
-    └── case-index.json         # v2.0: 11-case structured feature index
+    └── case-index.json         # v2.3: 11-case structured feature index
 ```
 
 ---
 
-## Methodology (v2.2)
+## Methodology (v2.3)
 
 ### Core Framework: Dual-Factor Analysis (violation + culpability)
 
@@ -172,7 +172,7 @@ Five system-thinking tools augment the base dual-factor analysis:
 | **M8: Just Culture Refinement** ⭐ | Dekker's just culture algorithm | Human error, at-risk behavior, or reckless conduct? | Sanction calibration |
 | **M9: Scapegoat Risk Audit** ⭐ | Organizational scapegoating | Is someone being unfairly singled out? | Pre-conclusion safeguard |
 
-> ⭐ = Added in v2.0. M1 (Incentive Compatibility), M3 (Unintended Consequences), and Triple-Mirror Analysis moved to Compliance Analysis (CA) skill per v2.2 specialization.
+> ⭐ = Added in v2.3. M1 (Incentive Compatibility), M3 (Unintended Consequences), and Triple-Mirror Analysis moved to Compliance Analysis (CA) skill per v2.3 specialization.
 
 ### Operational Flow: 3 Stages × 11 Steps + Enhancement Nodes
 
@@ -189,7 +189,7 @@ Stage 3: Conclusion
   S9 Counter-argument → S9a Scapegoat Audit 🛡️ → S10 Scoring → S11 Output
 ```
 
-### Key Features (v2.0)
+### Key Features (v2.3)
 
 **Dual-Round Adversarial Debate** — Agent 3 runs two rounds: Round 1 as prosecution (standard analysis), Round 2 as defense (role-switch, 3 strongest counterpoints). Each counterpoint assessed for validity and impact on conclusion. Prevents cognitive blind spots that single-pass analysis misses.
 

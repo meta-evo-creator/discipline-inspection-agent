@@ -15,7 +15,7 @@ metadata:
     emoji: ⚔️
 ---
 
-# Discipline-Inspection ⚔️ v2.0.0
+# Discipline-Inspection ⚔️ v2.3.0
 
 > **Discipline as the yardstick, vigilance as constant.** 9-Agent File-based Handoff Pipeline + Violation + Responsibility Two-Factor Analysis + Twenty-Four-Character Policy 6-Dimension Review Scoring Matrix.
 > Isomorphic architecture with DR v4.0.
@@ -364,16 +364,16 @@ Write output to file. Final reply must be exactly one line: `DONE <output_file_p
 
 ---
 
-### Agent 3: Analyze (Deep Analysis · v2.0 Dual-Round Adversarial Debate + Case Matching)
+### Agent 3: Analyze (Deep Analysis · v2.3 Dual-Round Adversarial Debate + Case Matching)
 
 **Input:** `agent0-scope.json` + `agent1-merged.json` + `agent2-audit.json`
 **Output:** `agent3-analyze.json` (full mode) / `agent4-draft.md` (interview mode — writes outline directly)
 
-> 🔴 v2.0: Dual-round adversarial debate protocol — Round 1 Prosecution analysis + Round 2 Defense challenge (3 rebuttal point matrix).
-> 🔴 v2.0: Case matching — rule-based matching using structured tags from `references/case-index.json`.
+> 🔴 v2.3: Dual-round adversarial debate protocol — Round 1 Prosecution analysis + Round 2 Defense challenge (3 rebuttal point matrix).
+> 🔴 v2.3: Case matching — rule-based matching using structured tags from `references/case-index.json`.
 > v1.5: Input changed from dual-source to single-source (agent1-merged).
 
-**Analysis methodology: Violation + Responsibility Two-Factor Analysis Framework v2.2**
+**Analysis methodology: Violation + Responsibility Two-Factor Analysis Framework v2.3**
 
 > Methodology source: `wiki/main/sources/discipline/methodology/violation-responsibility-two-factor-analysis-methodology.md`
 > Embedded from Central Commission for Discipline Inspection enforcement guidance case methodology.

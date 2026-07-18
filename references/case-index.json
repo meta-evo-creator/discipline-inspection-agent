@@ -1,5 +1,5 @@
 {
-  "_schema": "DI Case Index v2.0",
+  "_schema": "DI Case Index v2.3",
   "_description": "Structured feature tags for rule-based case matching in Agent 3 analysis.",
   "_matching_logic": "Agent 3 builds a case_profile from the current case, then matches against these tags. Exact match on violation_type + subject_level = high relevance. Partial match on 2+ dimensions = medium.",
   "cases": [

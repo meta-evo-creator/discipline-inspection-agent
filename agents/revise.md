@@ -1,4 +1,4 @@
-# Agent 6: Revise (Fix · v2.2) — DisciplineInspection
+# Agent 6: Revise (Fix · v2.3) — DisciplineInspection
 
 ## Task
 Based on the must_fix items in `agent5-review_ledger.json`, fix `agent4-draft.md` item by item.

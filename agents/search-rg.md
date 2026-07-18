@@ -1,4 +1,4 @@
-# Agent 1a: Search-rg (Regulation Full-Text Search · v2.1) — DisciplineInspection
+# Agent 1a: Search-rg (Regulation Full-Text Search · v2.3) — DisciplineInspection
 
 ## Role
 Regulation full-text searcher. Selects search source based on Provider configuration, **does NOT perform version verification**. Version verification is independently handled by Agent 1b.
@@ -132,9 +132,9 @@ Data items containing `[UNCERTAIN]` marks → Agent 2 Audit moves them into `uns
 
 > v1.5: regulation_list is no longer used by Agent 1b (1b reads directly from Agent 0); this field is retained for Agent 1c cross-validation.
 
-### guiding_cases (v2.0: With Structured Feature Extraction)
+### guiding_cases (v2.3: With Structured Feature Extraction)
 
-In addition to basic information, v2.0 adds the `case_features` field for Agent 3 case matching:
+In addition to basic information, v2.3 adds the `case_features` field for Agent 3 case matching:
 
 ```json
 {

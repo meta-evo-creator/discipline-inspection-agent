@@ -1,4 +1,4 @@
-# Agent 1b: Search-pkulaw (Version Verification · v2.1) — DisciplineInspection 🔴
+# Agent 1b: Search-pkulaw (Version Verification · v2.3) — DisciplineInspection 🔴
 
 ## Role
 Regulation version verifier. **Sole task**: Perform version verification on the regulation list produced by Agent 1a.

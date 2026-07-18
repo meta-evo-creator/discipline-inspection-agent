@@ -1,4 +1,4 @@
-# Agent 1a: Search-rg (Regulation Full-Text Search · v2.3) — DisciplineInspection
+﻿# Agent 1a: Search-rg (Regulation Full-Text Search · v2.3) — DisciplineInspection
 
 ## Role
 Regulation full-text searcher. Selects search source based on Provider configuration, **does NOT perform version verification**. Version verification is independently handled by Agent 1b.
@@ -64,7 +64,7 @@ rg -n "keyword" ${PROVIDER_BASE}/inspection/ --include "*province*" --include "*
 
 ```
 # For each matched regulation, verify subject scope:
-rg -n "第[一二三]条|Article [123]" <regulation_file_path>
+rg -n "Article [123]" <regulation_file_path>
 ```
 
 **Gate logic:**
@@ -181,8 +181,34 @@ In addition to basic information, v2.3 adds the `case_features` field for Agent 
 
 ---
 
+## 🔵 Output Schema (v2.4)
+
+```json
+{
+  "required": ["legal_provisions", "regulation_list", "provider_info"],
+  "legal_provisions": {
+    "minItems": 1,
+    "items": { "required": ["law", "article", "text_exact", "source_file", "source_line"] }
+  },
+  "regulation_list": { "minItems": 1 },
+  "provider_info": { "required": ["provider_name", "provider_capabilities"] }
+}
+```
+
+---
+
 ## Output Rules
 Write file to `memory/inspection-drafts/{task_id}/agent1a-search-rg.json`
 Final reply is a single line: `DONE <output file path>`
 
 **Version History:** v1.0 — Split from search.md, focuses on rg search; version verification transferred to Agent 1b.
+
+---
+
+## 🎯 Execution Tuning (v2.4)
+
+> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+
+<!-- TUNING_START -->
+(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+<!-- TUNING_END -->

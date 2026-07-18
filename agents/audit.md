@@ -1,4 +1,4 @@
-# Agent 2: Audit (Regulation Citation Audit · v2.3) — DisciplineInspection
+﻿# Agent 2: Audit (Regulation Citation Audit · v2.3) — DisciplineInspection
 
 ## Task
 Perform multi-dimensional audit verification on the outputs of Agent 1a (rg search) + Agent 1b (pkulaw version verification). If critical issues are found → directly FAIL and return to the corresponding Agent, without entering Agent 3.
@@ -142,8 +142,34 @@ Provisions lacking all three elements are downgraded and marked as "for referenc
 }
 ```
 
+## 🔵 Output Schema (v2.4)
+
+```json
+{
+  "required": ["audit_conclusion", "gate_checks", "version_cross_check", "issues"],
+  "audit_conclusion": { "enum": ["PASS", "PASS_WITH_WARNINGS", "FAIL"] },
+  "gate_checks": { "required": ["gate1_merge_validity", "gate2_source_line"] },
+  "version_cross_check": { "required": ["matched_with_version", "unverified", "outdated"] },
+  "issues": { "items": { "required": ["severity", "description"] } }
+}
+```
+
+FAIL → pipeline writes `pipeline_failure_log.json`, pipeline halts.
+
+---
+
 ## Output Rules
 Write file to `memory/inspection-drafts/{task_id}/agent2-audit.json`
 Final reply is a single line: `DONE <output file path>`
 
 **v1.6 Update:** Input changed from dual source (agent1a + agent1b) to single source (agent1-merged). Gate 1 changed from checking Agent 1b output to checking Agent 1c merged output validity. Supports parallel pipeline.
+
+---
+
+## 🎯 Execution Tuning (v2.4)
+
+> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+
+<!-- TUNING_START -->
+(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+<!-- TUNING_END -->

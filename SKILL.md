@@ -1,8 +1,8 @@
 ---
 name: discipline-inspection
-version: 2.3.0
+version: 2.5.1
 description: |
-  Discipline Inspection v2.3 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1 Policy Framework (4 concepts) + P2 Procedural Guidance (4 rules) + 3 Gates. Focused on party discipline inspection case analysis.
+  Discipline Inspection v2.5.1 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1/P2 Framework + 9-Agent Full-Gate Pipeline + Resilience + LESSON(urgency routing) + Quality Dashboard + KG Activation + Agent Tuning + KG Writeback. Focused on party discipline inspection case analysis.
 platforms:
   - openclaw
 tools:
@@ -15,12 +15,12 @@ metadata:
     emoji: ⚔️
 ---
 
-# Discipline-Inspection ⚔️ v2.3.0
+# Discipline-Inspection ⚔️ v2.5.0
 
-> **Discipline as the yardstick, vigilance as constant.** 8-Agent File-based Handoff Pipeline + Violation + Responsibility Two-Factor Analysis + Twenty-Four-Character Policy 6-Dimension Review Scoring Matrix.
+> **Discipline as the yardstick, vigilance as constant.** 10-Agent Full-Gate Pipeline + Schema Gates (100% coverage) + Pipeline Resilience + LESSON Collection + Quality Dashboard + Knowledge Graph Enrichment + Agent Tuning + Case Ruling Logic (L1/L2/L3).
 > 🔓 Open source under MIT License.
 
-> 📎 Shared config: `skills/supervision-shared/shared-config.yaml` · Agent files: `agents/*.md` · Case index: `references/case-index.json`
+> 📎 Shared config: `skills/supervision-shared/shared-config.yaml` · Agent files: `agents/*.md` (10 files, full Gate coverage) · Case index: `references/case-index.json`
 
 ---
 
@@ -63,7 +63,7 @@ The following are recorded as `[UNSOURCED-EXECUTION]`:
 | 4 | Draft | `agent4-draft.md` | Synthesis of upstream refs |
 | 5 | Review | `agent5-review_ledger.json` | Scoring matrix + fixes |
 | 6 | Revise | `agent6-final.md` | Corrected final |
-| 7 | Publish | → IMA upload | `owner_gate_handoff_ref` |
+| 7 | Publish | `agent7-publish-report.json` | Lesson collection + Quality dashboard + IMA upload |
 
 ### Pipeline Diagram
 
@@ -83,18 +83,18 @@ Agent 0 ─┬─→ Agent 1a (rg WIKI) ─┐
                                  ↓
                           Agent 6 (revise)
                                  ↓
-                          Agent 7 (publish → IMA)
+                          Agent 7 (publish: LESSON + quality + IMA)
 ```
 
-**Each Agent runs in isolated session (context:isolated, lightContext:true). Main session only handles spawn + gate + file existence verification.**
+**Each Agent runs in isolated session (context:isolated, lightContext:true). Main session only handles spawn + gate + file existence verification + Agent 7 IMA upload call.**
 
 ### Guardrail Routing
 
 | Mode | Trigger | Pipeline | Agents |
 |:-----|:--------|:---------|:------:|
-| **full** | Case characterization, sanction recommendation | 0→(1a∥1b)→1c→2→3→4→5→6→7 | 8+1 |
-| **interview** | Interview outline | 0→(1a∥1b)→1c→2→3+4→7 | 5+1 |
-| **quick** | Regulatory consultation, article lookup | 0→(1a∥1b)→1c→2→7 | 4+1 |
+| **full** | Case characterization, sanction recommendation | 0→(1a∥1b)→1c→2→3→4→5→6→7 | 9+1 |
+| **interview** | Interview outline | 0→(1a∥1b)→1c→2→3+4→7 | 6+1 |
+| **quick** | Regulatory consultation, article lookup | 0→(1a∥1b)→1c→2→7 | 5+1 |
 
 **Routing decision:** After Agent 0 completes, select mode based on `task_type`.
 
@@ -102,10 +102,26 @@ Agent 0 ─┬─→ Agent 1a (rg WIKI) ─┐
 
 ## 🔒 Protocol
 
-### File Verification (Mandatory)
-After each Agent completes: `read <output> → exists + size > 0`. File not found → mark `failed` → do NOT proceed → report to domain owner. File exists → record path only + ≤3 line summary → proceed.
+### Agent Gate Protocol (v2.4 — Schema Validation)
 
-**⛔ Only verify existence — do NOT read content into main session context.**
+After each Agent completes, execute gate in order:
+
+**Gate A — File Existence (v2.3):** `read <output> → exists + size > 0`. File not found → mark `failed` → write `pipeline_failure_log.json` → do NOT proceed.
+
+**Gate B — Schema Validation (v2.4 NEW):** Parse JSON output, validate against Agent's `## Output Schema` section in its agent file.
+- Required fields present → PASS → proceed to next Agent
+- Required fields missing → mark Agent `SCHEMA_FAIL` → write `pipeline_failure_log.json` → **return to that Agent for re-run (max 1 retry)**
+- Markdown output (Agent 4/6): `rg` search for required heading markers
+
+**Gate C — Summary Record (v2.4 NEW):** Gate passed → record `<output_path> + <agent_name> + <status> + <key_metrics>` to quality context for downstream agents.
+
+```
+Gate flow: A(exists?) → B(schema valid?) → C(record summary) → next Agent
+                        ↓ FAIL
+                   pipeline_failure_log.json → re-run Agent (1 retry) → still FAIL → halt
+```
+
+**⛔ Gates A+B only verify structure — do NOT read full content into main session context.**
 
 ### Solo Status Protocol
 Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipeline_id + phase status (structure defined in `skills/solo/SKILL.md`).
@@ -121,10 +137,38 @@ Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipelin
 ├── agent3-analyze.json        ← Phase 3: deep analysis
 ├── agent4-draft.md            ← Phase 4: report/outline
 ├── agent5-review_ledger.json  ← Phase 5: quality audit
-├── agent6-final.md            ← Phase 6: final version
-└── revision_log.json          ← Phase 6: revision log
+├── agent6-final.md              ← Phase 6: final version
+├── revision_log.json            ← Phase 6: revision log
+├── agent7-publish-report.json   ← Phase 7: lesson scan + quality dashboard report
+├── pipeline_failure_log.json    ← v2.4: failure tracking + resume checkpoint
+├── _quality.json                ← v2.4: pipeline quality metrics aggregation
+└── _lessons.json                ← v2.4: structured lesson collection
 ```
 **task_id format:** `DI-YYYYMMDD-seq`
+
+### Pipeline Resilience (v2.4 NEW)
+
+**Failure Log:** Any Agent gate failure → write `pipeline_failure_log.json`:
+```json
+{
+  "pipeline_id": "DI-YYYYMMDD-seq",
+  "failed_agent": "agentN",
+  "failure_type": "FILE_MISSING | SCHEMA_FAIL | GATE_FAIL",
+  "failure_detail": "...",
+  "completed_outputs": ["agent0-scope.json", "agent1a-search-rg.json", ...],
+  "retry_count": 0,
+  "timestamp": "ISO-8601"
+}
+```
+
+**Resume Protocol:** Before spawning any Agent, check if its output file already exists in `pipeline_output_dir/`:
+- Output exists + not marked FAILED in `pipeline_failure_log.json` → **skip** (already completed)
+- Output exists + marked FAILED → **re-run** (retry)
+- Output missing → **spawn** (normal execution)
+
+**Max retries:** 1 per Agent. After 2nd FAIL → pipeline halts, report to domain owner with `pipeline_failure_log.json`.
+
+**Cross-session resume:** Pipeline can be resumed from a different session if `pipeline_failure_log.json` + completed outputs exist. Main session reads failure log → spawns next pending Agent.
 
 ---
 
@@ -140,9 +184,10 @@ Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipelin
 - **1a (search-rg):** Full-text rg search of regulation library → `agent1a-search-rg.json`. See `agents/search-rg.md`.
 - **1b (search-pkulaw):** pkulaw version verification → `agent1b-search-pkulaw.json`. See `agents/search-pkulaw.md`.
 
-### Agent 1c: Merge (Inline)
+### Agent 1c: Merge (Three-Way Regulation Merge)
 **Input:** agent0-scope.json + agent1a + agent1b
-**Output:** `agent1-merged.json` — three-way match per regulation (rg hit + pkulaw status) with discrepancy markers (UNVERIFIED / search_miss). No standalone agent file; merge logic is embedded in pipeline flow.
+**Output:** `agent1-merged.json` — three-way match per regulation (rg hit + pkulaw status) with discrepancy markers (UNVERIFIED / search_miss). Five-status classification per regulation: matched / text_only / version_only / missing.
+**Agent file:** `agents/merge.md` (v2.4-P3: formerly inline, now with dedicated agent file + Output Schema + Gate B coverage)
 
 ### Agent 2: Audit (Regulation Citation Audit)
 **Input:** agent0-scope.json + agent1-merged.json
@@ -169,8 +214,61 @@ Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipelin
 **Output:** `agent6-final.md` + `revision_log.json`
 **Agent file:** `agents/revise.md`
 
-### Agent 7: Publish (IMA Upload)
-Called directly from main session: `node skills/solo-file-transfer/scripts/ima-upload.cjs <final_file> <KB_ID>`
+### Agent 7: Publish (v2.5.1 — IMA Upload + LESSON Collection + Quality Dashboard)
+
+**Agent file:** `agents/publish.md` (includes Output Schema for Gate B validation)
+
+**Step 7a — IMA Upload:** Called from main session: `node skills/solo-file-transfer/scripts/ima_upload.cjs <agent6-final.md> <KB_ID>`
+
+**Step 7b — LESSON Collection (v2.4 → v2.5.1):** After upload, scan all agent output files for `[LESSON]` markers:
+- `rg "\[LESSON\]" memory/inspection-drafts/{task_id}/` across all json/md files
+- Collect structured lessons → append to `memory/inspection-drafts/_lessons.json`:
+```json
+{
+  "pipeline_id": "DI-YYYYMMDD-seq",
+  "date": "ISO-8601",
+  "lessons": [
+    {
+      "source_agent": "agent3",
+      "category": "methodology | regulation | case | procedure",
+      "urgency": "P0 | P1 | P2",
+      "lesson": "...",
+      "action": "UPDATE_AGENT | ADD_CASE_TAG | UPDATE_REGULATION | NOTE_ONLY"
+    }
+  ]
+}
+```
+**Urgency routing (v2.5.1 NEW):**
+- `urgency: P0` (critical methodology bug / systematic error pattern) → **IMMEDIATE notification** to domain owner. Compose: `"⚡ DI URGENT LESSON | {task_id} | {source_agent} | {lesson_summary_first_80_chars}"` → send via messaging tool. Duration from finding to notification: <1 minute (vs 30-day monthly cron cycle).
+- `urgency: P1` (important pattern / recurring gap) → flagged for next regulation-manager monthly cron review.
+- `urgency: P2` (minor improvement) → recorded only, no active push.
+- Default (no urgency field): treated as P1.
+
+Lessons with `action: UPDATE_AGENT` → flagged for next regulation-manager monthly cron review (P1/P2) or immediate push (P0).
+
+**Step 7c — Quality Dashboard (v2.4 NEW):** Aggregate pipeline quality metrics → write `memory/inspection-drafts/_pipeline_quality_log.json`:
+```json
+{
+  "pipeline_id": "DI-YYYYMMDD-seq",
+  "timestamp": "ISO-8601",
+  "quality": {
+    "agent2_audit": "PASS | PASS_WITH_WARNINGS | FAIL",
+    "agent5_score": 0-100,
+    "agent5_dimensions": {
+      "accurate_characterization": 0-100,
+      "clear_facts": 0-100,
+      "conclusive_evidence": 0-100,
+      "appropriate_disposition": 0-100,
+      "complete_procedures": 0-100,
+      "procedural_compliance": 0-100
+    },
+    "upstream_feedback": [{"agent": "agentN", "issue": "...", "severity": "critical|high|medium|low"}],
+    "lessons_generated": 0,
+    "retries": 0
+  }
+}
+```
+**Quality trend check:** After append, compare current score with last 3 runs' average → deviation >15 points → flag for review.
 
 ⛔ **Report purity:** IMA upload = pure analysis content only. No pipeline IDs / Agent identifiers / audit metadata. Metadata → `memory/inspection-drafts/<case>/`.
 
@@ -219,6 +317,30 @@ Agent 0 feeds 1a and 1b simultaneously (no mutual dependency). 1b input changed 
 Agent 3 runs prosecution round + defense round (3 rebuttal points). Structured case indexing (11 guiding cases × 7 dimensional tags) for rule-based matching. **Principle:** Structured perspective-shifting combats cognitive blind spots; same agent runs two rounds — no new agent overhead.
 
 ### v2.3.0 — P1 Policy Framework + P2 Procedural Guidance
-P1: 4 conceptual frameworks (三个区分开来 · 由风变腐 · 虚浮辨识 · 透过现象看本质) as analysis backbone before violation determination. P2: 4 procedural rules (Sanction Matching · Asset Disposal · Accountability Pitfalls · Retirement≠Immunity) appended after conclusion. Agent 1c merge logic inlined (no standalone file). **Principle:** Higher-level conceptual framework reduces two-factor analysis blind spots.
+P1: 4 conceptual frameworks (Three Distinctions · Style-to-Corruption Gradient · Superficiality Identification · Seeing Through Appearance to Essence) as analysis backbone before violation determination. P2: 4 procedural rules (Sanction Matching · Asset Disposal · Accountability Pitfalls · Retirement≠Immunity) appended after conclusion. Agent 1c merge logic inlined (no standalone file). **Principle:** Higher-level conceptual framework reduces two-factor analysis blind spots.
+
+### v2.5.1 — Urgency Routing + KG Writeback + Ecosystem Tightening (2026-07-18)
+
+**Feedback loop acceleration (SP-ECO-001):** LESSON collection upgraded with `urgency` field. P0 lessons trigger immediate wecom notification (<1 minute vs 30-day monthly cron cycle). P1/P2 follow normal monthly review path.
+
+**Bidirectional KG activation (SP-ECO-004):** Agent 3 `kg_enrichment` was read-only. Added `kg_writeback` field to propose new edges/nodes/updates discovered during analysis. Monthly cron Part D5 consumes `category:"kg"` lessons → high-confidence proposals auto-applied, medium/low flagged for review.
+
+**Ecosystem coordination:** Monthly cron Part A now coordinates with weekly cron (new: `weekly regulation check` every Monday). solo-audit v5.6 deepened DI quality dashboard consumption (trend deviation detection).
+
+**Principle:** An evolution ecosystem is not defined by its components — it is defined by the feedback loops between them. v2.5.1 shortens the DI→Cron→DI loop from 30 days to <1 minute for critical lessons, and makes the KG a living graph instead of a static snapshot.
+
+### v2.5.0 — Full-Gate Pipeline (9/9) + Resilience + LESSON + Quality Dashboard + KG + Ruling Logic + Tuning (2026-07-18)
+
+**The v2.5 milestone: 9-agent pipeline with 100% Schema Gate coverage.** Three-case CCDI live-fire validation confirmed all mechanisms.
+
+**Structural hardening (P0):** Every agent file has `## Output Schema` → Gate B validates structure at every handoff. `merge.md` closes the last unprotected step (formerly inline, now a full agent). Schema rigidity fix: agent output templates aligned with Schema declarations, eliminating the most common failure mode (2 SCHEMA_FAILs in live test). Pipeline resilience: `pipeline_failure_log.json` + resume-from-checkpoint → 2 recoveries in live test without re-running completed agents.
+
+**Knowledge refinement (P1):** Case-index.json upgraded to L1(tag)/L2(ruling_logic)/L3(difference) matching with `ruling_logic` (core_principle + distinction_criteria + applicable_when + not_applicable_when) for all 11 cases. Structured LESSON collection pipeline: `[LESSON]` → `_lessons.json` → monthly cron → Agent Tuning fields. Quality dashboard aggregates per-run metrics with trend detection.
+
+**Ecosystem integration (P2):** Knowledge graph activation (55 nodes, 58 edges) → Agent 3 1-hop enrichment with `kg_enrichment` observability. Monthly cron Part C3: semi-automated case labeling + similarity matching + ruling_logic draft generation. All 9 agent files have `Execution Tuning` sections ready for lesson injection.
+
+**Guard improvements (P3):** `scope.md` Step -1 WIKI_PATH check prevents silent degradation. Case ruling logic L2 matching enables logic-level (not just tag-level) case comparison.
+
+**Principle:** A precision factory needs every handoff guarded, every signal collected, every lesson fed back. Quality is not a checkpoint — it is a continuous loop that starts at the first gate and never stops.
 
 > Full changelog with file-level changes → `references/changelog.md`

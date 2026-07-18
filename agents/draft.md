@@ -1,4 +1,4 @@
-# Agent 4: Draft (Report Writing · v2.3) — DisciplineInspection
+﻿# Agent 4: Draft (Report Writing · v2.3) — DisciplineInspection
 
 ## Task
 Based on agent3-analyze.json (v2.3 format: containing dual-round adversarial debate + case matching), write a formal discipline inspection report.
@@ -58,6 +58,36 @@ When drafting sanction/disciplinary action documents, distinguish three tiers of
 ## ⛔ Mandatory Pre-requisite
 Confirm that agent3-analyze.json contains the `methodology_version` field. Missing → return to Agent 3.
 
+## 🔵 Output Schema (v2.4)
+
+Report must contain all seven chapter headings. Gate validates header existence:
+
+```
+required_headings: [
+  "I. Basic Case Overview",
+  "II. Violation Determination",
+  "III. Culpability Determination",
+  "IV. Evidence & Adversarial Analysis",
+  "V. Case Reference",
+  "VI. Characterization Conclusion & Disposition",
+  "VII. Institutional Improvement Recommendations"
+]
+```
+
+Any required heading missing → mark Agent 4 FAILED, write `pipeline_failure_log.json`.
+
+---
+
 ## Output Rules
 Write file to `memory/inspection-drafts/{task_id}/agent4-draft.md`
 Final reply is a single line: `DONE <output file path>`
+
+---
+
+## 🎯 Execution Tuning (v2.4)
+
+> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+
+<!-- TUNING_START -->
+(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+<!-- TUNING_END -->

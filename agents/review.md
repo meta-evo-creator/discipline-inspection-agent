@@ -1,4 +1,4 @@
-# Agent 5: Review (Content Quality Audit · v2.3) — DisciplineInspection
+﻿# Agent 5: Review (Content Quality Audit · v2.3) — DisciplineInspection
 
 ## Task
 Perform twenty-four-character policy 6-dimensional scoring + methodology completeness audit + dual-round adversarial debate completeness audit on agent4-draft.md.
@@ -36,6 +36,39 @@ Perform twenty-four-character policy 6-dimensional scoring + methodology complet
 - Accurate characterization <50 / Clear facts <40 / Conclusive evidence <40 → forced REVISE
 - Any methodological mandatory item missing → forced REVISE
 
+## 🔵 Output Schema (v2.4)
+
+```json
+{
+  "required": ["total_score", "dimension_scores", "methodology_checks", "must_fix"],
+  "dimension_scores": {
+    "required": ["accurate_characterization", "clear_facts", "conclusive_evidence", 
+                  "appropriate_disposition", "complete_procedures", "procedural_compliance"]
+  },
+  "methodology_checks": {
+    "required": ["M6_defense_audit", "M7_attribution_calibration", "M2_lemon_market",
+                  "M4_accountability", "M8_just_culture", "M9_scapegoat_audit",
+                  "R1_dual_round_debate", "R2_case_reference"]
+  },
+  "conclusion": { "enum": ["PASS", "REVISE", "REJECT"] },
+  "upstream_feedback": { "type": "array" }
+}
+```
+
+`upstream_feedback` (v2.4 new): if quality issues trace to upstream agent output gaps, record `{agent, issue, severity}`.
+
+---
+
 ## Output Rules
 Write file to `memory/inspection-drafts/{task_id}/agent5-review_ledger.json`
 Final reply is a single line: `DONE <output file path>`
+
+---
+
+## 🎯 Execution Tuning (v2.4)
+
+> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+
+<!-- TUNING_START -->
+(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+<!-- TUNING_END -->

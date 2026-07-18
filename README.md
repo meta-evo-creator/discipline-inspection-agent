@@ -1,8 +1,8 @@
-# Discipline-Inspection ⚔️ v2.3
+# Discipline-Inspection ⚔️ v2.5.1
 
-> **Discipline as the yardstick. Constant vigilance.** 8-Agent parallel pipeline (1a∥1b) × Dual-Round Adversarial Debate × Case Structured Index (11 cases) × 6 Enhancement Modules × 24-Character Guideline scoring.
+> **Discipline as the yardstick. Constant vigilance.** 10-Agent Full-Gate Pipeline × Schema Gates (100% coverage) × Dual-Round Adversarial Debate × Case Structured Index (11 cases) × Pipeline Resilience × LESSON Collection with Urgency Routing × Quality Dashboard × Knowledge Graph Activation × Case Ruling Logic (L1/L2/L3).
 
-An AI-powered case analysis engine for party discipline inspection: feed in case facts → parallel regulation search + version verification → merge → audit → dual-round adversarial analysis with case matching → draft → review → finalized output.
+An AI-powered case analysis engine for party discipline inspection: feed in case facts → parallel regulation search + version verification → merge → audit → dual-round adversarial analysis with case matching → draft → review → revise → publish with lesson feedback loop.
 
 ---
 
@@ -42,27 +42,28 @@ With configuration, the pipeline unlocks 45+ regulations + PKULaw version verifi
 
 ---
 
-## Pipeline Architecture (v2.3)
+## Pipeline Architecture (v2.5.1)
 
 ```
 Phase 0: Scope           → Problem framing (outputs regulation_list)
 Phase 1a ∥ 1b:           → Reg search + Version verification (PARALLEL)
-Phase 1c: Merge          → 3-way merge of 1a + 1b
+Phase 1c: Merge          → 3-way merge of 1a + 1b (Schema-gated)
 Phase 2: Audit           → Citation audit & cross-verification
 Phase 3: Analyze         → ⭐ Dual-Round Adversarial Debate
                            Round 1: Prosecution analysis
                            Round 2: Defense challenge (3-point rebuttal matrix)
                            + ⭐ Case matching (11-case structured index)
+                           + 🔵 KG activation (1-hop enrichment + writeback)
 Phase 4: Draft           → Report / interview outline (7 chapters incl. case refs)
-Phase 5: Review          → 6-D scoring + debate completeness audit
+Phase 5: Review          → 6-D scoring (24-Character Policy) + debate completeness audit
 Phase 6: Revise          → Fixes based on review
-Phase 7: Publish         → Finalized output
+Phase 7: Publish         → Upload + LESSON collection + Quality Dashboard
 ```
 
 **Guardrail-routed modes:**
-- `full`: Case qualification / sanction recommendation (8 Agents)
-- `interview`: Interview outline (5 Agents)
-- `quick`: Regulation consultation / article lookup (4 Agents)
+- `full`: Case qualification / sanction recommendation (10 Agents)
+- `interview`: Interview outline (6 Agents)
+- `quick`: Regulation consultation / article lookup (5 Agents)
 
 ---
 
@@ -115,15 +116,17 @@ See: [`providers/regulation-source.interface.md`](providers/regulation-source.in
 discipline-inspection-agent/
 ├── SKILL.md                    # Full skill specification
 ├── README.md                   # This file
-├── agents/                     # 8 Agent prompts
+├── agents/                     # 10 Agent prompts
 │   ├── scope.md
 │   ├── search-rg.md
 │   ├── search-pkulaw.md
+│   ├── merge.md                # v2.5: dedicated agent file with Schema Gate
 │   ├── audit.md
-│   ├── analyze.md              # v2.3: dual-round debate + case matching
+│   ├── analyze.md              # v2.5: dual-round debate + KG activation + writeback
 │   ├── draft.md
 │   ├── review.md
-│   └── revise.md
+│   ├── revise.md
+│   └── publish.md              # v2.5.1: LESSON + Quality Dashboard agent
 ├── providers/                  # Pluggable knowledge layer 🔌
 │   ├── regulation-source.interface.md
 │   ├── default/                # Bundled demo regulation pack
@@ -135,7 +138,8 @@ discipline-inspection-agent/
 │       └── provider.yaml
 └── references/                 # Reference documents
     ├── scoring-matrix.md
-    └── case-index.json         # v2.3: 11-case structured feature index
+    ├── changelog.md            # Full version history
+    └── case-index.json         # v2.5: 11-case index with L1/L2/L3 ruling logic
 ```
 
 ---

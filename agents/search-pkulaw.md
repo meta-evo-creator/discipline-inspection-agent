@@ -1,4 +1,4 @@
-# Agent 1b: Search-pkulaw (Version Verification · v2.3) — DisciplineInspection 🔴
+﻿# Agent 1b: Search-pkulaw (Version Verification · v2.3) — DisciplineInspection 🔴
 
 ## Role
 Regulation version verifier. **Sole task**: Perform version verification on the regulation list produced by Agent 1a.
@@ -118,8 +118,34 @@ For each regulation, check:
 
 ---
 
+## 🔵 Output Schema (v2.4)
+
+```json
+{
+  "required": ["version_verified", "total_verified", "degradation_mode"],
+  "version_verified": { "minItems": 1 },
+  "version_verified[*]": { "required": ["law", "status"] },
+  "status": { "enum": ["MATCH", "VERSION_OUTDATED", "VERSION_UNVERIFIED"] },
+  "degradation_mode": { "type": "boolean" }
+}
+```
+
+🔴 `version_verified` empty array → Agent 2 Gate 1 direct FAIL.
+
+---
+
 ## Output Rules
 Write file to `memory/inspection-drafts/{task_id}/agent1b-search-pkulaw.json`
 Final reply is a single line: `DONE <output file path>`
 
 **Version History:** v1.1 — v1.5: Input source changed from agent1a to agent0, supporting parallel execution of 1a/1b. v1.0 — Split from search.md, focuses on pkulaw version verification.
+
+---
+
+## 🎯 Execution Tuning (v2.4)
+
+> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+
+<!-- TUNING_START -->
+(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+<!-- TUNING_END -->

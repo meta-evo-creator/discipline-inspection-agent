@@ -1,10 +1,57 @@
-# Agent 3: Analyze (Deep Analysis·v2.3) — DisciplineInspection
+﻿# Agent 3: Analyze (Deep Analysis·v2.3) — DisciplineInspection
 
 ## ⛔ Mandatory Prerequisite: Load the Full Methodology Text
 Before execution, MUST `rg` and read `${WIKI_PATH}/sources/discipline/methodology/Two-Factor-Violation-Accountability-Methodology.md`. Analysis must not proceed until the methodology is fully loaded.
 
 ## Optional Reference: Practical Case Library
 Cases may exist under `${WIKI_PATH}/sources/discipline/methodology/case-library/` — loading is optional but recommended.
+
+## 🔵 Knowledge Graph Activation (v2.4 NEW)
+
+Before entering P1 conceptual framework matching, load the methodology knowledge graph for contextual enrichment:
+
+1. **Read graph:** `read ${WIKI_PATH}/sources/discipline/methodology/di_methodology_knowledge_graph.json`
+2. **Node matching:** From the current case's violation_type and key legal provisions, identify the most relevant nodes in the graph:
+   - Match violation_type → `core_concept` nodes (e.g., "Violation Determination Formula" cc-01)
+   - Match regulation citations → `regulation` nodes
+   - Identify the analysis step currently being executed → `step` nodes
+3. **1-Hop neighbor expansion:** For each matched node, traverse `edges` to find directly connected nodes:
+   - `embeds_into` / `composed_of` → parent concept (broader framework context)
+   - `refined_by` / `extended_by` → enhancement modules (additional checks to apply)
+   - `references` / `based_on` → theoretical foundations
+   - `audits` → quality check gates (cross-reference with Agent 2 output)
+4. **Context injection:** Collected neighbor concepts are added to the analysis context as supplementary references. They do NOT replace the mandatory methodology text — they enrich it with cross-references.
+5. **🔵 Output (v2.4-P2):** Results MUST be recorded in the output under `kg_enrichment` field: `{ nodes_matched: N, concepts_enriched: [...], hop1_expanded: [...] }`. This field is REQUIRED by the Output Schema — missing it triggers SCHEMA_FAIL at Gate B.
+
+### 🔵🔄 KG Writeback (v2.5.1 NEW — Bidirectional Activation)
+
+After completing the analysis, if the agent discovers **new relationships not present in the KG**, propose writeback entries:
+
+6. **Relationship discovery triggers:**
+   - A regulation article is applied in a novel way not captured in KG edges
+   - Case matching reveals a cross-category pattern (e.g., violation_type A → affects responsibility assessment B)
+   - Adversarial debate uncovers a new `refined_by` or `audits` relationship
+   - P1 conceptual framework application reveals a new `embeds_into` hierarchy
+
+7. **Writeback proposal format:** Record under `kg_writeback` field:
+```json
+{
+  "kg_writeback": {
+    "proposals": [
+      {
+        "type": "new_edge | new_node | update_node",
+        "source": "current case context that triggered this discovery",
+        "target_node_id": "cc-XX or rc-XX or existing node ID",
+        "relationship": "refined_by | extended_by | audits | embeds_into | references",
+        "rationale": "1-sentence justification based on analysis findings",
+        "confidence": "high | medium | low"
+      }
+    ]
+  }
+}
+```
+
+8. **Routing:** `kg_writeback` proposals flow via Agent 7b LESSON collection to `_lessons.json` with `category: "kg"` and `action: "UPDATE_KG"`. Monthly cron Part D consumes these to update `di_methodology_knowledge_graph.json`.
 
 ## 📌 Guiding Case Consumption (Fact Matching Only · Principle Derivation by P1+P2)
 
@@ -87,6 +134,58 @@ P1_conceptual_framework: [Three Distinctions/From Style to Corruption/Superficia
 8_institutional_improvement: [Recommendations]
 ```
 
+## 🔵 Output Schema (v2.4)
+
+**⛔ The JSON output must match these keys EXACTLY. The YAML template in `## Output Format` is a SEMANTIC GUIDE — actual JSON keys are defined HERE.**
+
+```json
+{
+  "required": ["review_analysis_v2_3", "1_basic_facts", "2_violation_analysis", 
+               "3_responsibility_assessment", "adversarial_debate", "case_matches"],
+  "review_analysis_v2_3": { "required": ["P1_conceptual_framework"] },
+  "1_basic_facts": { "required": ["party", "person", "facts", "regulations"] },
+  "2_violation_analysis": { "required": ["violation_finding", "article_match"] },
+  "3_responsibility_assessment": { "required": ["accountability_level", "sanction_recommendation"] },
+  "adversarial_debate": {
+    "required": ["prosecution_round", "defense_round", "debate_matrix", "conclusion"]
+  },
+  "case_matches": { "minItems": 1 },
+  "methodology_version": { "type": "string", "minLength": 1 },
+  "kg_enrichment": {
+    "description": "Knowledge graph 1-hop enrichment results (v2.4-P2)",
+    "required": ["nodes_matched", "concepts_enriched", "hop1_expanded"]
+  },
+  "kg_writeback": {
+    "description": "KG writeback proposals for bidirectional activation (v2.5.1 NEW)",
+    "optional": true,
+    "properties": {
+      "proposals": [{
+        "type": "new_edge | new_node | update_node",
+        "source": "string",
+        "target_node_id": "string",
+        "relationship": "string",
+        "rationale": "string",
+        "confidence": "high | medium | low"
+      }]
+    }
+  }
+}
+```
+
+Missing required field → mark Agent 3 FAILED, write `pipeline_failure_log.json`.
+
+---
+
 ## Output Rule
 Write the result file to `memory/inspection-drafts/{task_id}/agent3-analyze.json`
 Final reply is a single line: `DONE <output file path>`
+
+---
+
+## 🎯 Execution Tuning (v2.4)
+
+> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+
+<!-- TUNING_START -->
+(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+<!-- TUNING_END -->

@@ -1,7 +1,7 @@
 {
-  "_schema": "DI Case Index v2.3",
-  "_description": "Structured feature tags for rule-based case matching in Agent 3 analysis.",
-  "_matching_logic": "Agent 3 builds a case_profile from the current case, then matches against these tags. Exact match on violation_type + subject_level = high relevance. Partial match on 2+ dimensions = medium.",
+  "_schema": "DI Case Index v2.4",
+  "_description": "Structured feature tags for rule-based case matching in Agent 3 analysis. v2.4 adds ruling_logic per case for L2 logic-level matching.",
+  "_matching_logic": "Agent 3 builds a case_profile from the current case, then matches against these tags. L1: exact match on violation_type + subject_level = high relevance. L2: ruling_logic matching via core_principle similarity. L3: difference analysis via not_applicable_when.",
   "cases": [
     {
       "id": "case-001",
@@ -16,7 +16,13 @@
       "mitigating_factors": [],
       "penalty": "Serious Party Internal Warning + Administrative Demotion",
       "penalty_severity": "Below severe punishment",
-      "key_ruling": "Official vehicle for personal use = conduct issue (minor); Private vehicle using public funds = corruption issue (severe) - Distinguishing 'conduct' from 'corruption'"
+      "key_ruling": "Official vehicle for personal use = conduct issue (minor); Private vehicle using public funds = corruption issue (severe) - Distinguishing 'conduct' from 'corruption'",
+      "ruling_logic": {
+        "core_principle": "Distinguishing 'conduct issues' from 'corruption' — different stages in the same behavioral chain may violate different categories of discipline",
+        "distinction_criteria": ["Whether public funds entered personal pockets", "Whether behavior is 'use' or 'appropriation'", "Duration and frequency"],
+        "applicable_when": "Public-private mixed-use scenarios, blurred cost boundaries, small amounts but long duration",
+        "not_applicable_when": "Purely personal consumption unrelated to official duties, amounts large enough to constitute embezzlement",
+      }
     },
     {
       "id": "case-002",
@@ -31,7 +37,13 @@
       "mitigating_factors": ["Promoting reform", "No personal interest", "Procedurally substantially compliant"],
       "penalty": "No accountability / Lenient treatment",
       "penalty_severity": "Exemption",
-      "key_ruling": "Violation does not equal disciplinary violation - Requires three-dimensional judgment of 'violation elements + culpability elements + exculpatory circumstances'"
+      "key_ruling": "Violation does not equal disciplinary violation - Requires three-dimensional judgment of 'violation elements + culpability elements + exculpatory circumstances'",
+      "ruling_logic": {
+        "core_principle": "Three Distinctions — violation ≠ disciplinary breach; requires three-dimensional judgment: violation elements + culpability elements + exculpatory circumstances",
+        "distinction_criteria": ["Whether subjective purpose was to promote development or seek personal gain", "Whether procedure was substantively compliant or merely form-deficient", "Whether irreparable loss was caused"],
+        "applicable_when": "Exploratory mistakes in reform and innovation, procedural deficiencies with substantive compliance, no personal benefit transfer",
+        "not_applicable_when": "Knowing and willful violations, using reform as a cover for disciplinary breaches, causing significant foreseeable losses",
+      }
     },
     {
       "id": "case-003",
@@ -46,7 +58,13 @@
       "mitigating_factors": [],
       "penalty": "Expulsion from the Party + Dismissal from Public Office + Referral to Judicial Authorities",
       "penalty_severity": "Severe punishment + Criminal referral",
-      "key_ruling": "Failure to truthfully respond during inquiry + collusion to fabricate evidence = collectively determined as obstructing organizational investigation (Political Discipline), not Organizational Discipline"
+      "key_ruling": "Failure to truthfully respond during inquiry + collusion to fabricate evidence = collectively determined as obstructing organizational investigation (Political Discipline), not Organizational Discipline",
+      "ruling_logic": {
+        "core_principle": "Qualitative upgrade for resisting organizational review — collusion + evidence fabrication = political discipline violation, not organizational discipline",
+        "distinction_criteria": ["Whether there was active collusion", "Whether substantive evidence was fabricated", "Whether the timing was before or after organizational interview"],
+        "applicable_when": "Collusion during organizational review, fabricating evidence materials, directing others to commit perjury",
+        "not_applicable_when": "Mere failure to truthfully explain, passive avoidance of questions, no fabrication",
+      }
     },
     {
       "id": "case-004",
@@ -61,7 +79,13 @@
       "mitigating_factors": [],
       "penalty": "First Form",
       "penalty_severity": "Light punishment / Criticism and education",
-      "key_ruling": "Formalism and Bureaucratism = violation of Eight-point Regulation, stated separately in adjudication documents. If consequences resulted, handle per regulations; if no consequences, apply First Form"
+      "key_ruling": "Formalism and Bureaucratism = violation of Eight-point Regulation, stated separately in adjudication documents. If consequences resulted, handle per regulations; if no consequences, apply First Form",
+      "ruling_logic": {
+        "core_principle": "Superficiality Identification for formalism/bureaucratism — distinguish 'unintentional error' from 'deliberate inaction', graded by consequences",
+        "distinction_criteria": ["Whether there were actual consequences", "Whether it was capability deficiency or attitude problem", "Whether isolated incident or long-term pattern"],
+        "applicable_when": "Inaction without direct loss, typical form-over-substance behavior",
+        "not_applicable_when": "Caused severe and foreseeable consequences, underlying benefit transfer, systematic fraud",
+      }
     },
     {
       "id": "case-005",
@@ -76,7 +100,13 @@
       "mitigating_factors": [],
       "penalty": "Serious Party Internal Warning + Administrative Major Demerit",
       "penalty_severity": "Below severe punishment",
-      "key_ruling": "Blank official letter reimbursement = embezzlement (not ordinary irregular dining). Distinguish personal embezzlement from collective violation"
+      "key_ruling": "Blank official letter reimbursement = embezzlement (not ordinary irregular dining). Distinguish personal embezzlement from collective violation",
+      "ruling_logic": {
+        "core_principle": "Seeing Through Appearance to Essence — blank official letter reimbursement appears to be 'improper reception' but is substantively 'embezzlement'. Distinguish individual misappropriation from collective violation",
+        "distinction_criteria": ["Whether funds entered personal pockets", "Whether there were fabricated official activities", "Whether it was systematic exploitation or individual forgery"],
+        "applicable_when": "Obtaining public funds under false pretenses, multiple participants following the same pattern at different times",
+        "not_applicable_when": "Genuine official activities with only excessive amounts, no intent to misappropriate",
+      }
     },
     {
       "id": "case-006",
@@ -91,7 +121,13 @@
       "mitigating_factors": [],
       "penalty": "Serious Party Internal Warning + Restitution",
       "penalty_severity": "Below severe punishment",
-      "key_ruling": "Mixed public-private banquets - split treatment: public-funded portion characterized as disciplinary violation + restitution; personal portion borne by participants themselves"
+      "key_ruling": "Mixed public-private banquets - split treatment: public-funded portion characterized as disciplinary violation + restitution; personal portion borne by participants themselves",
+      "ruling_logic": {
+        "core_principle": "Segmented treatment of public-private mixed scenarios — public-fund portion characterized separately + restitution; private portion handled independently. Do not characterize the entire event as a disciplinary violation merely because of partial public funding",
+        "distinction_criteria": ["Proportion of public funds", "Who initiated", "Whether participants knew public funds were used"],
+        "applicable_when": "Group meals partially reimbursed with public funds, subordinates attending superior-initiated official banquets",
+        "not_applicable_when": "Fully public-funded with no official purpose, concealing personal consumption",
+      }
     },
     {
       "id": "case-007",
@@ -106,7 +142,13 @@
       "mitigating_factors": [],
       "penalty": "Serious Party Internal Warning + Administrative Demotion",
       "penalty_severity": "Below severe punishment",
-      "key_ruling": "Illegal levy of fees = infringement of public interests (Mass Line Discipline), not ordinary financial violation"
+      "key_ruling": "Illegal levy of fees = infringement of public interests (Mass Line Discipline), not ordinary financial violation",
+      "ruling_logic": {
+        "core_principle": "Disciplinary characterization of improper levies — violation of Mass Discipline (infringing on the people's interests), not ordinary financial violation. Levying on managed service recipients is its defining feature",
+        "distinction_criteria": ["Whether levy targets are subordinate units or ordinary people", "Whether official authority influence was involved", "Whether expenses were for official or personal purposes"],
+        "applicable_when": "Using official authority to levy on subordinate units or managed service recipients",
+        "not_applicable_when": "Normal internal cost allocation within an organization, no authority factor",
+      }
     },
     {
       "id": "case-008",
@@ -121,7 +163,13 @@
       "mitigating_factors": [],
       "penalty": "Party Internal Warning to Serious Warning",
       "penalty_severity": "Light punishment",
-      "key_ruling": "No blanket prohibition - Key considerations: 'whether authority or position influence was leveraged' + 'whether adverse social impact was caused' + local economic and customary factors"
+      "key_ruling": "No blanket prohibition - Key considerations: 'whether authority or position influence was leveraged' + 'whether adverse social impact was caused' + local economic and customary factors",
+      "ruling_logic": {
+        "core_principle": "Wedding/funeral events are 'not absolutely prohibited' — key tests: 'whether official authority influence was used' + 'whether adverse social impact was caused' + local economic and customary factors",
+        "distinction_criteria": ["Whether managed service recipients attended", "Whether gift amounts significantly exceeded local norms", "Whether events were staged in installments to evade regulation"],
+        "applicable_when": "Managed service recipients attended, using official influence to receive clearly excessive gifts",
+        "not_applicable_when": "Only relatives attended, gift amounts within local norms, no authority factor",
+      }
     },
     {
       "id": "case-009",
@@ -136,7 +184,13 @@
       "mitigating_factors": ["Already retired"],
       "penalty": "Party Internal Warning",
       "penalty_severity": "Light punishment",
-      "key_ruling": "Retirement does not equal immunity - Accepting banquets after retirement by leveraging former authority or position-established convenience conditions can still constitute a disciplinary violation"
+      "key_ruling": "Retirement does not equal immunity - Accepting banquets after retirement by leveraging former authority or position-established convenience conditions can still constitute a disciplinary violation",
+      "ruling_logic": {
+        "core_principle": "Retirement ≠ Immunity — using convenience formed by former official position or status can constitute a disciplinary violation even after retirement. Key test: 'whether former position influence persists'",
+        "distinction_criteria": ["Whether the favor request relates to former official duties", "Time interval (how long after retirement)", "Whether there was a clear 'helping' act"],
+        "applicable_when": "Interacting with former managed service recipients shortly after retirement, favor requests directly related to former duties",
+        "not_applicable_when": "Normal social interaction years after retirement, no favor request, no connection to former position",
+      }
     },
     {
       "id": "case-010",
@@ -151,7 +205,13 @@
       "mitigating_factors": ["Grassroots objective condition constraints"],
       "penalty": "Admonishment (correction of accountability result)",
       "penalty_severity": "Correction",
-      "key_ruling": "Accountability cannot be 'one-size-fits-all' - Must distinguish direct responsibility / leadership responsibility; cannot pursue accountability for its own sake"
+      "key_ruling": "Accountability cannot be 'one-size-fits-all' - Must distinguish direct responsibility / leadership responsibility; cannot pursue accountability for its own sake",
+      "ruling_logic": {
+        "core_principle": "Accountability must not be 'one-size-fits-all' — must distinguish direct responsibility / managerial responsibility / supervisory responsibility; must not pursue accountability for its own sake",
+        "distinction_criteria": ["Whether the person is the direct operator or manager", "Whether there are clearly defined duty boundaries", "Whether grassroots objective constraints were considered"],
+        "applicable_when": "Multiple persons held accountable without distinguishing responsibility levels, grassroots cadres given maximum punishment without clear subjective fault",
+        "not_applicable_when": "Responsibility levels clearly distinguished, each level has clear dereliction of duty",
+      }
     },
     {
       "id": "case-011",
@@ -166,7 +226,13 @@
       "mitigating_factors": [],
       "penalty": "Revocation of Party Position + Confiscation of Illegal Gains",
       "penalty_severity": "Severe punishment",
-      "key_ruling": "Grassroots cadre fraudulently obtaining agricultural subsidies = Mass Line Discipline + Embezzlement dual characterization. Village committee director recommended to resign from position"
+      "key_ruling": "Grassroots cadre fraudulently obtaining agricultural subsidies = Mass Line Discipline + Embezzlement dual characterization. Village committee director recommended to resign from position",
+      "ruling_logic": {
+        "core_principle": "Dual characterization for grassroots cadres defrauding subsidies — Mass Discipline violation + Embezzlement. Village committee director should be recommended to resign (not subject to administrative sanctions)",
+        "distinction_criteria": ["Whether the subject is an administrative agency appointee", "Whether the defrauded funds were state subsidies or collective funds", "Whether the amount meets the criminal prosecution threshold"],
+        "applicable_when": "Grassroots organization personnel using official convenience to defraud state subsidies",
+        "not_applicable_when": "Ordinary villagers without official convenience defrauding subsidies (not supervisory targets)",
+      }
     }
   ],
   "matching_dimensions": [
@@ -177,5 +243,10 @@
     "amount.range",
     "mental_state",
     "penalty_severity"
-  ]
+  ],
+  "matching_dimensions_v2_4": {
+    "l1_tag_match": ["violation_type", "violation_category", "subject.level", "subject.identity", "amount.range", "mental_state", "penalty_severity"],
+    "l2_logic_match": ["ruling_logic.core_principle", "ruling_logic.distinction_criteria"],
+    "l3_difference": ["ruling_logic.not_applicable_when"]
+  }
 }

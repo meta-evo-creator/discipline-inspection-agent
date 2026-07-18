@@ -5,6 +5,54 @@
 
 ---
 
+## v2.5.1 — Urgency Routing + KG Writeback + LESSON Agent File + Publish Fix (2026-07-18)
+
+**Key additions over v2.5.0:**
+- `urgency` field in LESSON collection — P0 triggers immediate wecom notification (<1 min vs 30-day cron cycle)
+- `kg_writeback` field in Agent 3 output — proposals flow via LESSON to `_lessons.json` with `category: "kg"`
+- **New file:** `agents/publish.md` — Agent 7 now has its own agent file with Output Schema (was previously main-session steps only)
+- Fixed ima upload script path: `ima-upload.cjs` → `ima_upload.cjs` (underscore spelling)
+- Pipeline now 10 agents (0→1a∥1b→1c→2→3→4→5→6→7) with all Schema Gates covered
+
+**Files changed:**
+- New: `agents/publish.md`
+- Modified: `SKILL.md` (agent count update, ima script path fix)
+- Modified: `references/changelog.md` (this entry)
+
+**Ecosystem coordination:** Monthly cron Part A now coordinates with weekly cron (`weekly regulation check`). solo-audit v5.6 deepened DI quality dashboard consumption (trend deviation detection).
+
+**Principle:** An evolution ecosystem is not defined by its components — it is defined by the feedback loops between them. v2.5.1 shortens the DI→Cron→DI loop from 30 days to <1 minute for critical lessons, and makes the KG a living graph instead of a static snapshot.
+
+---
+
+## v2.5.0 — Full-Gate Pipeline + Case Ruling Logic + KG + Tuning + WIKI_PATH Guard (2026-07-18)
+
+**Three-case CCDI live-fire validation.** All mechanisms triggered and verified.
+
+**New agent:** `agents/merge.md` — Agent 1c is no longer inline; pipeline now 9/9 agents with Schema Gate.
+
+**All 9 agent files:** Output Schema + Execution Tuning sections.
+
+**SKILL.md:** 8-Agent → 9-Agent pipeline. Gate B schema validation. Pipeline resilience + failure log + resume protocol. Agent 7 expanded: LESSON collection + Quality Dashboard. P1/P2/KG entries consolidated.
+
+**references/case-index.json:** v2.4 with ruling_logic (L1/L2/L3 matching) for all 11 cases.
+
+**agents/scope.md:** Step -1 WIKI_PATH check. Step 4 output template aligned with Schema (REQUIRED/OPTIONAL).
+
+**agents/analyze.md:** KG activation with 1-hop enrichment. `kg_enrichment` required in Schema.
+
+**New files:** `_lessons.json`, `_pipeline_quality_log.json`, `merge.md`.
+
+**Cron updates:** Monthly regulation inspection cron Part C3 semi-automated extraction + C6 health report + Part D _lessons.json sync. SOLO daily audit expanded to 19 checks.
+
+**Live test results:** 3 cases (Case A / Case B / Case C), avg score 88.37, 2 Schema Gate intercepts, 2 pipeline recoveries, 0 uncorrected failures.
+
+---
+
+## v2.4.0 — (merged into v2.5.0; see above)
+
+---
+
 ## v1.0.1 — Independent Separation from DI v3.0.2 (2026-06-08)
 
 **Source:** Split from original discipline-inspect v3.0.2. Discipline inspection and inspection tour supervision methodologies were incompatible (violation+responsibility vs political examination); wiki data layers already independent.

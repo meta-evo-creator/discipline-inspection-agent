@@ -1,23 +1,30 @@
 ---
 name: discipline-inspection
-version: 2.5.1
+version: 2.6.0
 description: |
-  Discipline Inspection v2.5.1 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1/P2 Framework + 10-Agent Full-Gate Pipeline + Resilience + LESSON(urgency routing) + Quality Dashboard + KG Activation + Agent Tuning + KG Writeback. Focused on party discipline inspection case analysis.
+  Discipline Inspection v2.6.0 ⚔️ Methodology v2.3: Dual-Factor + 6 Modules + P1/P2 Framework + 10-Agent Full-Gate Pipeline + Resilience + LESSON(urgency routing) + Quality Dashboard + KG Activation + Agent Tuning + KG Writeback + Hermes-Native Self-Repair (Phase 8). Focused on party discipline inspection case analysis.
 platforms:
   - openclaw
+  - hermes
 tools:
   - ripgrep
   - sessions_spawn
   - memory_search
   - tavily_search
+  - skill_manage
 metadata:
   openclaw:
     emoji: ⚔️
+  hermes:
+    emoji: ⚔️
+    features:
+      - instant_self_repair
+      - delegate_task_parallel
 ---
 
-# Discipline-Inspection ⚔️ v2.5.1
+# Discipline-Inspection ⚔️ v2.6.0
 
-> **Discipline as the yardstick, vigilance as constant.** 10-Agent Full-Gate Pipeline + Schema Gates (100% coverage) + Pipeline Resilience + LESSON Collection + Quality Dashboard + Knowledge Graph Enrichment + Agent Tuning + Case Ruling Logic (L1/L2/L3).
+> **Discipline as the yardstick, vigilance as constant.** 10-Agent Full-Gate Pipeline + Schema Gates (100% coverage) + Pipeline Resilience + LESSON Collection + Quality Dashboard + Knowledge Graph Enrichment + Agent Tuning + Case Ruling Logic (L1/L2/L3) + **Hermes-Native Instant Self-Repair (Phase 8)**.
 > 🔓 Open source under MIT License.
 
 > 📎 Shared config: `skills/supervision-shared/shared-config.yaml` · Agent files: `agents/*.md` (10 files, full Gate coverage) · Case index: `references/case-index.json`
@@ -64,6 +71,7 @@ The following are recorded as `[UNSOURCED-EXECUTION]`:
 | 5 | Review | `agent5-review_ledger.json` | Scoring matrix + fixes |
 | 6 | Revise | `agent6-final.md` | Corrected final |
 | 7 | Publish | `agent7-publish-report.json` | Lesson collection + Quality dashboard + IMA upload |
+| 8 | Self-Repair | `_auto_fix_log.json` | Hermes-native instant patch via `skill_manage` |
 
 ### Pipeline Diagram
 
@@ -84,9 +92,11 @@ Agent 0 ─┬─→ Agent 1a (rg WIKI) ─┐
                           Agent 6 (revise)
                                  ↓
                           Agent 7 (publish: LESSON + quality + IMA)
+                                 ↓
+                          Agent 8 (self-repair: skill_manage auto-patch) ← 🆕 v2.6.0 Hermes-native
 ```
 
-**Each Agent runs in isolated session (context:isolated, lightContext:true). Main session only handles spawn + gate + file existence verification + Agent 7 IMA upload call.**
+**Each Agent runs in isolated session (context:isolated, lightContext:true). Main session only handles spawn + gate + file existence verification + Agent 7 IMA upload call + Agent 8 auto-patch.**
 
 ### Guardrail Routing
 
@@ -214,7 +224,7 @@ Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipelin
 **Output:** `agent6-final.md` + `revision_log.json`
 **Agent file:** `agents/revise.md`
 
-### Agent 7: Publish (v2.5.1 — IMA Upload + LESSON Collection + Quality Dashboard)
+### Agent 7: Publish (v2.6.0 — IMA Upload + LESSON Collection + Quality Dashboard + Self-Repair Handoff)
 
 **Agent file:** `agents/publish.md` (includes Output Schema for Gate B validation)
 
@@ -274,6 +284,96 @@ Lessons with `action: UPDATE_AGENT` → flagged for next regulation-manager mont
 
 ---
 
+## Phase 8: Self-Repair (v2.6.0 · Hermes-Native) 🆕
+
+> **The pipeline that fixes itself.** Phase 8 runs in the main session after Agent 7 completes — it is NOT a spawned agent. It uses Hermes's `skill_manage` tool to instantly patch agent files when P0 lessons are collected.
+
+### Self-Repair Protocol
+
+```
+Agent 7 completes → main session reads agent7-publish-report.json
+                         ↓
+              For each lesson in lessons[]:
+                         ↓
+        ┌────────────────┼────────────────┐
+        ↓                ↓                ↓
+   urgency=P0       urgency=P1       urgency=P2
+   action=UPDATE    action=UPDATE    any action
+        ↓                ↓                ↓
+   confidence=HIGH  confidence=any    → NOTE_ONLY
+        ↓                ↓           (record only)
+   skill_manage(        ↓
+   action='patch',  write to
+   old_string,      _pending_fixes.json
+   new_string)      → flagged for
+        ↓           solo-audit review
+   write success
+   to _auto_fix_log.json
+```
+
+### Decision Matrix
+
+| Urgency | Action | Confidence | Behavior |
+|:--------|:-------|:-----------|:---------|
+| P0 | UPDATE_AGENT | HIGH | **Auto-patch** via `skill_manage(action='patch')` — no human review |
+| P0 | UPDATE_AGENT | MEDIUM | Push notification to domain owner for one-click approval |
+| P0 | UPDATE_AGENT | LOW | Push notification for full review |
+| P0 | UPDATE_REGULATION | any | Write to `_pending_fixes.json` for regulation-manager cron |
+| P0 | UPDATE_KG | any | Write to `_pending_fixes.json` for monthly cron |
+| P0 | ADD_CASE_TAG | any | Auto-apply to case-index.json (confined to JSON append) |
+| P1 | UPDATE_AGENT | any | Write to `_pending_fixes.json` → flagged for next solo-audit |
+| P2 | any | any | Record only in `_lessons.json` |
+
+### Auto-Fix Log (`_auto_fix_log.json`)
+
+Every auto-patch writes an audit trail:
+```json
+{
+  "pipeline_id": "DI-YYYYMMDD-seq",
+  "timestamp": "ISO-8601",
+  "auto_fixes": [
+    {
+      "lesson_index": 0,
+      "source_agent": "agent3",
+      "target_file": "agents/analyze.md",
+      "target_section": "## Step 5 — Responsibility Assessment",
+      "patch_applied": true,
+      "old_text_preview": "first 80 chars...",
+      "new_text_preview": "first 80 chars..."
+    }
+  ],
+  "pending_fixes": [],
+  "notifications_sent": 0
+}
+```
+
+### P0 Notification Format (MEDIUM/LOW confidence)
+
+When a P0 lesson cannot be auto-applied (confidence != HIGH), the main session composes:
+```
+⚡ DI URGENT PATCH | DI-YYYYMMDD-seq | agentN | confidence: MEDIUM
+Target: agents/analyze.md § Step 5
+Lesson: {lesson_summary}
+Old: {old_text preview}
+New: {new_text preview}
+→ Reply "apply" to auto-patch, "skip" to dismiss
+```
+
+### Interaction with Existing Cron
+
+- The monthly regulation-manager cron still processes P1 lessons from `_pending_fixes.json`
+- The solo-audit daily cron reads `_auto_fix_log.json` to verify patches were clean
+- The P0 urgency routing **bypasses** the cron cycle entirely — patches land in seconds, not 30 days
+
+### Safety Constraints
+
+- **Only `UPDATE_AGENT` with `confidence=HIGH` is auto-applied.** All other combinations require notification.
+- **Patch target is restricted to `agents/*.md` within this skill.** No external file patching.
+- **Each auto-patch writes an audit log entry.** Rollback is possible via git history (this skill is under version control).
+- **`skill_manage(action='patch')` uses fuzzy matching** — if `old_string` doesn't match, the patch fails cleanly without corrupting the file.
+
+---
+
 ## Anonymization Protocol
 Organization names use anonymized placeholders ("A tertiary hospital" / "A provincial hospital"). Sensitive data → reference Agent 0 scope file path, not written directly into prompts.
 
@@ -319,9 +419,24 @@ Agent 3 runs prosecution round + defense round (3 rebuttal points). Structured c
 ### v2.3.0 — P1 Policy Framework + P2 Procedural Guidance
 P1: 4 conceptual frameworks (Three Distinctions · Style-to-Corruption Gradient · Superficiality Identification · Seeing Through Appearance to Essence) as analysis backbone before violation determination. P2: 4 procedural rules (Sanction Matching · Asset Disposal · Accountability Pitfalls · Retirement≠Immunity) appended after conclusion. Agent 1c merge logic inlined (no standalone file). **Principle:** Higher-level conceptual framework reduces two-factor analysis blind spots.
 
+### v2.6.0 — Hermes-Native Instant Self-Repair (2026-07-19) 🆕
+
+**The feedback loop collapses from 30 days to <1 minute.**
+
+In OpenClaw, the DI pipeline could only *collect* lessons — actual agent file patches required an external monthly cron cycle. In Hermes, the `skill_manage` tool is available to the main session, enabling:
+
+- **Instant P0 patching:** `skill_manage(action='patch')` fires immediately after Agent 7, with `confidence=HIGH` gate for safety
+- **Structured handoff:** Agent 7 now includes `target_file`, `old_text`, `new_text`, and `confidence` fields — making each lesson a machine-executable patch proposal
+- **Audit trail:** Every auto-patch writes `_auto_fix_log.json` for review by solo-audit cron
+- **Tiered routing:** P0/HIGH → instant, P0/MEDIUM → notification, P1 → pending queue, P2 → record only
+
+**Platform dependency:** Phase 8 is **Hermes-native** — it requires `skill_manage` which is not available in OpenClaw's agent sessions. On OpenClaw, the pipeline gracefully degrades: Phase 8 is skipped, lessons go to `_lessons.json` as before. No pipeline change needed — the `platforms` field in frontmatter declares both.
+
+**Principle:** Self-repair capability is the difference between a tool that reports its mistakes and a tool that fixes them. The DI pipeline is now the latter.
+
 ### v2.5.1 — Urgency Routing + KG Writeback + Ecosystem Tightening (2026-07-18)
 
-**Feedback loop acceleration (SP-ECO-001):** LESSON collection upgraded with `urgency` field. P0 lessons trigger immediate wecom notification (<1 minute vs 30-day monthly cron cycle). P1/P2 follow normal monthly review path.
+**Feedback loop acceleration (SP-ECO-001):** LESSON collection upgraded with `urgency` field. P0 lessons trigger immediate notification (<1 minute vs 30-day monthly cron cycle). P1/P2 follow normal monthly review path.
 
 **Bidirectional KG activation (SP-ECO-004):** Agent 3 `kg_enrichment` was read-only. Added `kg_writeback` field to propose new edges/nodes/updates discovered during analysis. Monthly cron Part D5 consumes `category:"kg"` lessons → high-confidence proposals auto-applied, medium/low flagged for review.
 

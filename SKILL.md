@@ -93,8 +93,8 @@ Agent 0 ─┬─→ Agent 1a (rg WIKI) ─┐
 | Mode | Trigger | Pipeline | Agents |
 |:-----|:--------|:---------|:------:|
 | **full** | Case characterization, sanction recommendation | 0→(1a∥1b)→1c→2→3→4→5→6→7 | 9+1 |
-| **interview** | Interview outline | 0→(1a∥1b)→1c→2→3+4→7 | 6+1 |
-| **quick** | Regulatory consultation, article lookup | 0→(1a∥1b)→1c→2→7 | 5+1 |
+| **interview** | 谈话手册 | 0→(1a∥1b)→1c→2→3+4→7 | 6+1 |
+| **quick** | Regulation consultation / article lookup | 0→(1a∥1b)→1c→2→7 | 5 |
 
 **Routing decision:** After Agent 0 completes, select mode based on `task_type`.
 
@@ -123,7 +123,35 @@ Gate flow: A(exists?) → B(schema valid?) → C(record summary) → next Agent
 
 **⛔ Gates A+B only verify structure — do NOT read full content into main session context.**
 
-### Solo Status Protocol
+### 进度可见性（v2.6 · 对标 OPL progress visibility）
+
+> 每个 Phase 完成后，主会话输出一行人类可读的进度摘要。不再盲猜管线走到哪。
+
+**进度输出格式：**
+
+```
+🔵 0/9 Scope      ⏳ 运行中（第一步）
+🟢 0/9 Scope      ✅ 公职人员身份确认 → regulation_list: 5部法规
+🟢 1/9 Search∥     ✅ 1a: 8条款原文 | 1b: 5法规版本确认
+🟢 2/9 Merge       ✅ 5法规 matched + 2条额外发现(第98/111条)
+🟡 3/9 Audit       ⚠️ PASS_WITH_WARNINGS (5项WARNING)
+🟢 4/9 Analyze     ✅ 双轮辩论完成 → 111条优先认定
+🟢 5/9 Draft       ✅ 685行 v2.4报告
+🟢 6/9 Review      ✅ 82/100 PASS
+🟢 7/9 Revise      ✅ 33处[未溯源]标注 + 59处P0-P2
+🟢 8/9 Publish     ✅ IMA已上传
+⬜ 9/9 Self-Repair  ⏳ 扫描中…
+✅ 9/9 Done         0条P0教训 / 48分钟
+```
+
+**阻塞输出格式：**
+
+```
+🔴 3/9 Audit       ❌ REJECT: Agent 2 条款核查失败 → 退回 Agent 1c 重查
+🔴 5/9 Review      🔴 HUMAN_ESCALATION: 56/100 < 65 → 暂停，等石冰决策
+```
+
+### Solo Status Protocol（机器可读·保留兼容）
 Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipeline_id + phase status (structure defined in `skills/solo/SKILL.md`).
 
 ### Output Path Protocol
@@ -199,9 +227,12 @@ Before/after each Agent spawn, update `./solo/pipeline-status.json` with pipelin
 **Output:** `agent3-analyze.json` — P1 conceptual framework → violation+responsibility two-factor analysis (11-step workflow with embedded M2-M9 modules) → dual-round adversarial debate → case matching → P2 procedural guidance
 **Agent file:** `agents/analyze.md` (includes full P1+P2 framework, 11-step workflow, YAML output template, medical case specialty)
 
-### Agent 4: Draft (Report Writing)
-**Input:** agent0-scope.json + agent3-analyze.json
-**Output:** `agent4-draft.md` — seven-chapter report with interview outline guardrails (criminal transition warning + regulation cross-reference + signature subject three-layer distinction)
+### Agent 4: Draft（谈话手册 / 案件报告）
+
+**Output:** `agent4-draft.md`
+
+- **interview模式→谈话手册**：速览+瑕疵+策略+法规卡+问话表。150行以内。删减：逐条论证/M7-M9过程/量纪矩阵/调查方法清单。保留：案件速览、瑕疵声明、突破口策略、心理攻防、第十七条话术、指导性案例参照、法规速查、**36条问话汇总（分四阶段）**。
+- **full模式→核查报告**：七章标准报告 + 谈话提纲护栏（涉刑转段警告+法规交叉引用+谈话对象三层区分）
 **Agent file:** `agents/draft.md`
 
 ### Agent 5: Review (Quality Audit)
@@ -274,6 +305,30 @@ Lessons with `action: UPDATE_AGENT` → flagged for next regulation-manager mont
 
 ---
 
+
+## 🔧 Hermes 执行指南（v2.6.0）
+
+> 本技能在 Hermes 上使用 `delegate_task` 替代 `sessions_spawn`。管线逻辑不变。
+
+### 主会话执行流程
+
+```
+1. delegate_task Agent 0 (scope) → 读回 agent0-scope.json
+2. delegate_task Agent 1a + 1b (并行) → 读回两个json
+3. delegate_task Agent 1c (merge) → 读回 agent1-merged.json
+4-9. agent 2→6 顺序 delegate
+10. Agent 7 (publish) + Phase 8 (main session skill_manage)
+```
+
+### 关键差异
+
+| 项目 | OpenClaw | Hermes |
+|:-----|:---------|:-------|
+| Agent 1a∥1b | sessions_spawn ×2 | delegate_task tasks[] 批量并行 |
+| Gate 验证 | read 文件 | read_file 文件 |
+| IMA上传 | wecom通知 | QQ Bot 原生交付 |
+| 自修复 | ❌ | ✅ skill_manage 即时patch |
+
 ## Anonymization Protocol
 Organization names use anonymized placeholders ("A tertiary hospital" / "A provincial hospital"). Sensitive data → reference Agent 0 scope file path, not written directly into prompts.
 
@@ -319,7 +374,18 @@ Agent 3 runs prosecution round + defense round (3 rebuttal points). Structured c
 ### v2.3.0 — P1 Policy Framework + P2 Procedural Guidance
 P1: 4 conceptual frameworks (Three Distinctions · Style-to-Corruption Gradient · Superficiality Identification · Seeing Through Appearance to Essence) as analysis backbone before violation determination. P2: 4 procedural rules (Sanction Matching · Asset Disposal · Accountability Pitfalls · Retirement≠Immunity) appended after conclusion. Agent 1c merge logic inlined (no standalone file). **Principle:** Higher-level conceptual framework reduces two-factor analysis blind spots.
 
-### v2.5.1 — Urgency Routing + KG Writeback + Ecosystem Tightening (2026-07-18)
+### v2.5.2: Analyze Agent方法论重构 (2026-07-21)
+来源：王某案实战 + OpenClaw 597行方法论文档吸收
+核心改动（Agent 3 analyze.md）：
+- **基座不变**：违规+有责双因素仍是基础
+- **增强模块嵌入**：M7/M4/M8/M9四个高频模块内嵌到Agent prompt
+- **条件触发**：M2（证据存疑时）/ M6（系统性案件时）
+- **案例模式匹配**：新增P01-P05通用案例模式
+- **经查→认为**：强制作为结论输出格式
+- **interview精简路径**：跳过M2/M6，仍必做M7/M4/M8/M9
+- **瑕疵不遗漏**：每项未确认事实标注F01-F06类编号
+
+### v2.5.1 — Urgency Routing + KG Writeback (2026-07-18)
 
 **Feedback loop acceleration (SP-ECO-001):** LESSON collection upgraded with `urgency` field. P0 lessons trigger immediate wecom notification (<1 minute vs 30-day monthly cron cycle). P1/P2 follow normal monthly review path.
 

@@ -1,10 +1,11 @@
-﻿# Agent 7: Publish (v2.5.1) — DisciplineInspection
+﻿# Agent 7: Publish (v2.6.0) — DisciplineInspection
 
 ## Task
 After Agent 6 (Revise) completes, run post-pipeline steps:
 1. **Step 7a — IMA Upload:** Upload `agent6-final.md` to the designated IMA knowledge base
-2. **Step 7b — LESSON Collection:** Scan all agent output files for `[LESSON]` markers and append to `_lessons.json`
+2. **Step 7b — LESSON Collection:** Scan all agent output files for `[LESSON]` markers and append to `_lessons.json`. For P0 lessons, include patch-ready context (`target_file`, `old_text`, `new_text`, `confidence`).
 3. **Step 7c — Quality Dashboard:** Update `_pipeline_quality_log.json` with quality metrics
+4. **Step 7d — Self-Repair Handoff (v2.6.0 NEW):** Structure P0 lessons so the main session's Phase 8 can auto-patch via `skill_manage`. This step only prepares the data — the actual patching is executed by the main session orchestration.
 
 ## Input
 All upstream agent outputs in `memory/inspection-drafts/{task_id}/`:
@@ -14,7 +15,7 @@ All upstream agent outputs in `memory/inspection-drafts/{task_id}/`:
 
 ## Output
 
-### Step 7b — LESSON Output
+### Step 7b — LESSON Output (v2.6.0)
 ```json
 {
   "pipeline_id": "DI-YYYYMMDD-seq",
@@ -28,12 +29,22 @@ All upstream agent outputs in `memory/inspection-drafts/{task_id}/`:
       "source_agent": "agentN",
       "category": "methodology | regulation | case | procedure | kg",
       "urgency": "P0 | P1 | P2",
-      "lesson": "...",
-      "action": "UPDATE_AGENT | ADD_CASE_TAG | UPDATE_REGULATION | UPDATE_KG | NOTE_ONLY"
+      "confidence": "HIGH | MEDIUM | LOW",
+      "lesson": "Human-readable description of what was learned",
+      "action": "UPDATE_AGENT | ADD_CASE_TAG | UPDATE_REGULATION | UPDATE_KG | NOTE_ONLY",
+      "target_file": "agents/analyze.md  (required for P0+UPDATE_AGENT)",
+      "target_section": "## Step 5 — Responsibility Assessment  (for context)",
+      "old_text": "The exact string to be replaced (for skill_manage patch)",
+      "new_text": "The replacement string"
     }
   ]
 }
 ```
+
+**v2.6.0 NEW fields:**
+- `confidence`: HIGH = the fix is unambiguously correct (auto-apply). MEDIUM = likely correct but verify. LOW = needs human review.
+- `target_file` / `target_section` / `old_text` / `new_text`: Required when `urgency=P0` and `action=UPDATE_AGENT`. These enable the main session's Phase 8 to execute `skill_manage(action='patch')` without ambiguity.
+- If the lesson is about a pattern rather than a specific text fix, set `action=NOTE_ONLY` and omit the patch fields.
 
 ### Step 7c — Quality Entry
 ```json
@@ -76,7 +87,7 @@ KB_ID is the target knowledge base ID (configurable per deployment).
 6. Append entry to `memory/inspection-drafts/_pipeline_quality_log.json`
 7. Compare current score with last 3 runs' average → deviation >15 → flag for review
 
-## 🔵 Output Schema (v2.5.1)
+## 🔵 Output Schema (v2.6.0)
 
 ```json
 {
@@ -87,7 +98,12 @@ KB_ID is the target knowledge base ID (configurable per deployment).
     "items": {
       "required": ["source_agent", "category", "lesson"],
       "category": { "enum": ["methodology", "regulation", "case", "procedure", "kg"] },
-      "urgency": { "enum": ["P0", "P1", "P2"] }
+      "urgency": { "enum": ["P0", "P1", "P2"] },
+      "confidence": { "enum": ["HIGH", "MEDIUM", "LOW"] },
+      "action": { "enum": ["UPDATE_AGENT", "ADD_CASE_TAG", "UPDATE_REGULATION", "UPDATE_KG", "NOTE_ONLY"] },
+      "target_file": { "type": "string", "required_when": "urgency=P0 AND action=UPDATE_AGENT" },
+      "old_text": { "type": "string", "required_when": "urgency=P0 AND action=UPDATE_AGENT" },
+      "new_text": { "type": "string", "required_when": "urgency=P0 AND action=UPDATE_AGENT" }
     }
   }
 }

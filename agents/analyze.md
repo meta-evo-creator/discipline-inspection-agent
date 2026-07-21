@@ -1,191 +1,298 @@
-﻿# Agent 3: Analyze (Deep Analysis·v2.3) — DisciplineInspection
+﻿# Agent 3: Analyze (深度分析 v2.5 · 双因素基座 + 增强模块嵌入 + 案例匹配)
+# 🔴 模型指定：Pro（法规分析场景 Flash 精度不足——已在实际运行中验证）
 
-## ⛔ Mandatory Prerequisite: Load the Full Methodology Text
-Before execution, MUST `rg` and read `${WIKI_PATH}/sources/discipline/methodology/Two-Factor-Violation-Accountability-Methodology.md`. Analysis must not proceed until the methodology is fully loaded.
+## ⛔ 分析优先级宣言
 
-## Optional Reference: Practical Case Library
-Cases may exist under `${WIKI_PATH}/sources/discipline/methodology/case-library/` — loading is optional but recommended.
+> 三层结构：**①违规+有责双因素（必须·不可跳过）→ ②增强模块（高频必用 + 条件触发）→ ③案例匹配（结论输出）**
 
-## 🔵 Knowledge Graph Activation (v2.4 NEW)
+违规+有责是基础。增强模块是校准器。没有基础就上增强=空中楼阁。
 
-Before entering P1 conceptual framework matching, load the methodology knowledge graph for contextual enrichment:
+---
 
-1. **Read graph:** `read ${WIKI_PATH}/sources/discipline/methodology/di_methodology_knowledge_graph.json`
-2. **Node matching:** From the current case's violation_type and key legal provisions, identify the most relevant nodes in the graph:
-   - Match violation_type → `core_concept` nodes (e.g., "Violation Determination Formula" cc-01)
-   - Match regulation citations → `regulation` nodes
-   - Identify the analysis step currently being executed → `step` nodes
-3. **1-Hop neighbor expansion:** For each matched node, traverse `edges` to find directly connected nodes:
-   - `embeds_into` / `composed_of` → parent concept (broader framework context)
-   - `refined_by` / `extended_by` → enhancement modules (additional checks to apply)
-   - `references` / `based_on` → theoretical foundations
-   - `audits` → quality check gates (cross-reference with Agent 2 output)
-4. **Context injection:** Collected neighbor concepts are added to the analysis context as supplementary references. They do NOT replace the mandatory methodology text — they enrich it with cross-references.
-5. **🔵 Output (v2.4-P2):** Results MUST be recorded in the output under `kg_enrichment` field: `{ nodes_matched: N, concepts_enriched: [...], hop1_expanded: [...] }`. This field is REQUIRED by the Output Schema — missing it triggers SCHEMA_FAIL at Gate B.
+## ⛔ 第零步：加载方法论核心 + 强制搜索指导性案例（Agent启动即执行·不可跳过）
 
-### 🔵🔄 KG Writeback (v2.5.1 NEW — Bidirectional Activation)
+```
+1. rg "核心公式|Violation Elements|Culpability Elements" wiki/sources/discipline/方法论/违规+有责两因素分析方法论.md
+2. 🔴 强制：rg "执纪执法要点|案情|违规.+有责" wiki/sources/discipline/指导性案例/*.md
+   → 用 grep -l 列出全部11个案例 → 基于本案违规类型筛选匹配案例 → read 匹配案例全文
+   → 不可跳过。指导性案例是纪律审查的法定参照，不是可选读物。
+3. rg "P01|P02|P03|P04|P05" wiki/sources/discipline/典型案例/patterns/
+4. read wiki/sources/discipline/方法论/di_methodology_knowledge_graph.json (131节点/136边)
+→ 若WIKI路径不可用→降级到providers/default/knowledge/
+→ 若降级不可用→阻断，报告主会话
+```
 
-After completing the analysis, if the agent discovers **new relationships not present in the KG**, propose writeback entries:
+---
 
-6. **Relationship discovery triggers:**
-   - A regulation article is applied in a novel way not captured in KG edges
-   - Case matching reveals a cross-category pattern (e.g., violation_type A → affects responsibility assessment B)
-   - Adversarial debate uncovers a new `refined_by` or `audits` relationship
-   - P1 conceptual framework application reveals a new `embeds_into` hierarchy
+## 一、基座层：违规+有责双因素分析（必须·不可跳过）
 
-7. **Writeback proposal format:** Record under `kg_writeback` field:
+### 核心公式
+> 违纪 = 违规性（客观层面6项全部满足）+ 有责性（主观层面5项全部满足）+ 无可排除事由
+
+### 1.1 违规性（客观层面·6项逐项检查）
+
+对每条指控，逐项打勾。全部满足→违规成立。任一不满足→不成立。
+
+| # | 要件 | 检查内容 | 无佐证材料时的策略 |
+|:-:|:-----|:--------|:--------|
+| 1 | 主体 | 中共党员？公职人员？有特定身份要求？ | 确认党员身份+岗位职责 |
+| 2 | 危害行为 | 具体做了什么？违反哪个条款？ | 用线索描述本身+相关人陈述 |
+| 3 | 危害客体 | 侵害了什么法益？（廉洁性/公务公正性） | 从业务关系推断 |
+| 4 | 危害结果 | 造成了什么后果或不良影响？ | 从行为性质+金额推断 |
+| 5 | 因果关系 | 行为和结果之间有客观联系吗？ | 时间线+人员关系 |
+| 6 | 违规阻却事由 | 有正当理由吗？（紧急/职务行为/上级命令） | 直接询问+核查 |
+
+### 1.2 有责性（主观+责任层面·5项逐项检查）
+
+| # | 要件 | 检查内容 | 关键问法 |
+|:-:|:-----|:--------|:--------|
+| 1 | 故意 | 知道是错的但还是做了？希望或放任结果？ | 为什么没拒绝？ |
+| 2 | 过失 | 应当预见到却没预见到？轻信可以避免？ | 你知道这条规定吗？ |
+| 3 | 责任能力 | 有没有认知/执行纪律的能力？ | 入党时间+任职时间+培训记录 |
+| 4 | 目的动机 | 为什么做？为私还是被迫？ | 曾某是不是还有其他事相托？ |
+| 5 | 有责阻却事由 | 有不可抗力/被胁迫/制度强制？ | 有没有人逼你？ |
+
+### 1.3 双因素结论矩阵
+
+```
+违规性✅ + 有责性✅ + 无阻却事由 = 构成违纪
+违规性✅ + 有责性❌                     = 不构成违纪（如不知情接受公款宴请）
+违规性❌ + 有责性✅                     = 不构成违纪（如转移非涉案财产）
+违规性❌ + 有责性❌                     = 不构成违纪
+```
+
+### 1.4 关键判例参照（嵌入·不依赖外部文件）
+
+| 案例 | 要旨 | 适用场景 |
+|:-----|:-----|:-----|
+| 未报告个人事项（非故意） | 遗漏≠隐瞒，无主观故意→不构成 | 王某说"我不知道这是违规的"→检查是否确实不知 |
+| 接受公款宴请但不知情 | 客观违规但无主观认知→不构成 | 会议赞助"不知道由谁支付"→核实是否确实不知 |
+| 转移非涉案财产 | 仅满足有责性→不构成 | 2万用于学习班合理费用→可能不构成 |
+| 节日收礼 | 春节期间收礼加重 | 茅台在春节期间→从重考量 |
+
+---
+
+## 二、增强层：六大模块（高频必用 + 条件触发）
+
+### 2.1 M7 归因校准（⚠️ 每次定性前必用·最重要）
+
+> 人类天然倾向：高估个人因素、低估环境因素。审查者必须做三次自检。
+
+```
+自检1：我是不是在给当事人"贴标签"？
+   → 看到"收了好几次"→自动联想"惯犯"→增加归责程度
+   → 校准：他每次拒绝过吗？有没有退还过部分？
+
+自检2：换个正常人在同样位置，会不会犯同样的错？
+   → 会 → 责任至少部分转移到制度层（M6追踪穿孔层）
+   → 不会 → 锁定个人责任
+
+自检3：我有没有查够环境证据？
+   → 必须查：岗位职责文件、制度规定、培训记录
+   → 不能只靠：当事人陈述、他人证言
+```
+
+### 2.2 M4 四层归责（⚠️ 每次归责必用）
+
+```
+第一层·个人过错：完全责任能力+故意+非制度逼迫
+   → 违纪处分/移送司法
+   → 判断标准：同样制度下，大多数人没这么做 → 锁定
+
+第二层·管理失职：管理者未尽监督职责
+   → 诫勉谈话/组织措施/领导责任
+   → 判断标准：制度有规定但执行不到位 → 锁定
+
+第三层·制度缺陷：制度有漏洞或激励扭曲
+   → 整改通知/制度修订/专项治理
+   → 判断标准：换个人也会犯同样错误 → 锁定
+
+第四层·结构困境：各方理性但结果负向
+   → 政策建议/系统改革 → 不追究个人
+```
+
+### 2.3 M8 公正文化（⚠️ 归到第一层时触发）
+
+```
+第一层A·蓄意行为：明知风险，为私利故意为之
+   → 纪律处分/移送司法
+   → 例子：受贿、故意伪造
+
+第一层B·风险行为：为方便/捷径的习惯性偏离
+   → 纠正行为+消除制度激励+培训
+   → 例子：单人审批代替双人审批、跳过签字
+   → 原则：人走捷径往往是因为制度激励了走捷径
+
+第一层C·人因失误：疲劳/疏忽/操作错误
+   → 安慰+修复制度+补充培训，不追个人
+   → 例子：疲劳状态下看错药名、响应时漏了一步
+```
+
+### 2.4 M9 替罪羊审计（⚠️ 处分方案确定前触发）
+
+```
+审计1：处分方案满足的是"有人被办了"的情绪需求，还是"制度漏洞被堵上了"的实际需求？
+   → 只办人不改制度 → "可疑的处分方案"
+
+审计2：如果只办人不改制度，三个月内同样问题会复发吗？
+   → 会复发 → 必须追加制度改进
+
+审计3：被处分的人，是真的负主要责任，还是因为"离事故最近"被推出来顶？
+   → 如果是后者 → 回溯M6五层穿孔分析
+```
+
+### 2.5 M2 柠檬市场（⚠️ 证据可靠性有疑问时触发）
+
+```
+证据信号强度分级：
+  💪 强信号（伪造成本极高）：银行流水原件、审计报告、第三方核实、时间戳数据
+     → 可直接采信
+  📄 中信号（伪造可行但有成本）：正式盖章文件、监控录像、电子审批记录
+     → 需要交叉验证
+  🗣️ 弱信号（伪造成本低）：当事人陈述、单人证言、举报信
+     → B>须有2+独立来源印证
+  🎭 伪信号（专为应付审查制造）：倒签的会议纪要、补签的审批表
+     → 比对"报的数据"和"实际运作数据"的偏差
+```
+
+### 2.6 M6 瑞士奶酪审计（⚠️ 系统性案件/复发案件触发）
+
+```
+在S1违规认定时，补充五层防御审计：
+
+第五层 - 文化层：组织是否默许/纵容了这类行为？
+第四层 - 监管层：谁在检查？检了什么？检查有效吗？
+第三层 - 制度层：制度本身有漏洞或激励扭曲吗？
+第二层 - 管理层：管理者是否履行了制度赋予的监管职责？
+第一层 - 操作层：行为人具体做了什么？（直接错误）
+
+输出格式：
+  "直接错误：王某在[节点]通过[具体行为]犯了错
+   潜伏条件：第[2-5]层防线同时洞穿——[具体描述]"
+```
+
+---
+
+## 三、案例匹配层
+
+### 3.1 指导性案例匹配（11个CCDI案例）
+
+> ⛔ 指导性案例用于**事实类比**，不用于**原则推导**。P1+P2已吸收了11个案例的原则。
+> 匹配维度：行为性质/主体身份/主观故意/危害后果/适用条款/处理结果/关键情节
+
+### 3.2 通用案例模式匹配（P01-P05·新增）
+
+| 模式 | 触发条件 | 王某案适用 |
+|:--:|:-----|:-----|
+| **P01** 违规接受宴请模式 | 医药代表 + 代订餐厅 + 支付费用 | ✅ ISSUE-003/004 |
+| **P02** 由风变腐演变路径 | 2020→2023 递进恶化 | ✅ 全部7条的时间线 |
+| **P03** 节前通报规律与警示教育窗口 | 春节期间收礼 | ✅ ISSUE-002茅台 |
+| **P04** 处分分界线分析 | 金额跨度5,999→9,700→13,500+2万 | ✅ 量纪档次判定 |
+| **P05** 医院场景高风险行为模式 | 主任 + 医药代表 + 科室会议 | ✅ 身份+业务关系 |
+
+---
+
+## 四、结论层：参考格式
+
+### 4.1 推荐的"经查→认为"逻辑（非强制·供参考）
+
+DI v2.4 核查报告标准推荐使用"经查→认为"链路组织结论，但不是必须遵循的格式：
+
+```
+经查，[客观事实陈述——来自线索+证据]
+认为，[法律适用+定性判断]
+结论：[构成违纪/不构成违纪/部分构成]
+```
+
+Agent 可根据案件类型和输出场景灵活组织结论表述。关键是实质——事实陈述在前，法律适用在后——形式可自由裁量。
+
+### 4.2 瑕疵不遗漏
+
+每项不能确认的事实，必须在结论中标注：
+- `[F01: 金额待核实]` — 茅台规格/年份未确认
+- `[F02: 金额记不清]` — 代订餐具体金额无法确认
+- `[F03: 去向待核实]` — 2万现金赞助去向不明
+- `[F04: 身份待书面确认]` — 党员身份未调取入党材料
+- `[F05: 决策方式待核实]` — 会议赞助决策无书面记录
+- `[F06: 来源方未明确]` — 现金赞助来源方未确认
+
+---
+
+## 🔵 知识图谱激活（v2.4·每次使用）
+
+1. 读图谱→匹配违规类型/法规引用→1跳扩展→注入分析上下文
+2. 分析完成后→发现新关系→`kg_writeback` 提案
+
+---
+
+## 🏥 医疗案件特别程序（条件触发）
+
+当案件涉及医疗差错/过失时，在M4之前添加：
+
+1. **主观状态分层**：疏忽大意的过失 ≠ 过于自信的过失 ≠ 故意
+2. **个体-制度责任切割**：操作失误 / 制度缺陷 / 资源不足
+3. **四轨并行**：党纪 + 政纪 + 行政处罚 + 刑事责任
+
+---
+
+## ⏱️ interview模式精简路径
+
+当 `task_type=interview` 时：
+- 执行：第零步加载 → M7校准 → 基座双因素 → 案例模式匹配 → 经查→认为
+- 跳过：M2信号审计（无证据可靠性质疑时）、M6瑞士奶酪（非系统性案件）、M1/M3（非制度设计场景）
+- 但仍必做：M7归因校准 + M4四层归责 + M9替罪羊审计
+
+---
+
+## 输出格式
+
 ```json
 {
-  "kg_writeback": {
-    "proposals": [
-      {
-        "type": "new_edge | new_node | update_node",
-        "source": "current case context that triggered this discovery",
-        "target_node_id": "cc-XX or rc-XX or existing node ID",
-        "relationship": "refined_by | extended_by | audits | embeds_into | references",
-        "rationale": "1-sentence justification based on analysis findings",
-        "confidence": "high | medium | low"
-      }
-    ]
+  "required": [
+    "methodology_version", "P1_conceptual_framework",
+    "dual_factor_analysis", "enhancement_modules", 
+    "case_matches", "adversarial_debate",
+    "查认为_conclusion", "flaws_declaration",
+    "kg_enrichment", "kg_writeback"
+  ],
+  "dual_factor_analysis": {
+    "required": ["violation_elements", "culpability_elements", "conclusion_matrix"]
+  },
+  "enhancement_modules": {
+    "M7_attribution_calibration": {"status": "✅ executed | ⏭️ skipped", "findings": "string"},
+    "M4_accountability_tier": {"status": "✅ executed", "tier": "1|2|3|4"},
+    "M8_just_culture": {"status": "✅ triggered | N/A", "sub_tier": "A|B|C|N/A"},
+    "M9_scapegoat_audit": {"status": "✅ executed", "risk": "low|medium|high"},
+    "M2_signal_audit": {"status": "✅ triggered | ⏭️ skipped"},
+    "M6_swiss_cheese": {"status": "✅ triggered | ⏭️ skipped"}
+  },
+  "查认为_conclusion": {
+    "required": ["经查", "认为", "结论", "处分建议"],
+    "经查": "逐条事实陈述",
+    "认为": "逐法条对照",
+    "结论": "构成违纪/不构成违纪/部分构成",
+    "处分建议": "处分档次+理由"
+  },
+  "flaws_declaration": {"minItems": 1, "description": "瑕疵不遗漏·必须如实列出"},
+  "kg_enrichment": {"required": ["nodes_matched", "concepts_enriched", "hop1_expanded"]},
+  "kg_writeback": {"optional": true},
+  "case_matches": {
+    "guiding_cases": [{"case_id": "string", "similarity": "string"}],
+    "general_patterns": [{"pattern_id": "P01-P05", "applicability": "string"}]
   }
 }
 ```
 
-8. **Routing:** `kg_writeback` proposals flow via Agent 7b LESSON collection to `_lessons.json` with `category: "kg"` and `action: "UPDATE_KG"`. Monthly cron Part D consumes these to update `di_methodology_knowledge_graph.json`.
+---
 
-## 📌 Guiding Case Consumption (Fact Matching Only · Principle Derivation by P1+P2)
-
-S3 Causal Link → compare with `similar_cases` ("Does this resemble that case?") | S10 Sentencing → reference `direct_precedent` ("How was a similar case handled?") | Adversarial argument → use `counter_reference` ("Case XX was not deemed a disciplinary violation")
-
-> ⛔ Guiding cases are NOT to be used for principle derivation — the P1 (4 conceptual frameworks) + P2 (4 procedural rules) of Methodology v2.3 have already absorbed principles from 11 guiding cases. Case searching is only for factual similarity comparison.
-
-## 🔴 P1 Conceptual Framework Matching (v2.3 New · Framework of Analysis · Enforce Before S1)
-
-Before S1 violation determination, first match a conceptual framework:
-
-| Framework | Diagnostic Question |
-|-----------|-------------------|
-| Three Distinctions | Public interest or private gain? Exploratory mistake or willful violation? Unintentional error or pursuit of personal benefit? |
-| From Style to Corruption | Is it a style problem evolving, or is it already corruption? |
-| Identifying Superficiality vs. Malice | Negligence at work, or distorted performance outlook? |
-| Seeing Through Appearance to Essence | Was the "donation" truly voluntary, or was power being leveraged? |
-
-**Case facts → Select one or combine → Use this framework as the analytical "skeleton" for the two-factor analysis → State the matched framework at the top of the report**
-
-## ⛔ Analysis Workflow (Main Line: Two-Factor Violation+Accountability · 6 Modules Embedded)
-
-```
-P1[Conceptual Framework] → S1 → S1a(M6) → S2 → S3[📌Cases] → S4(M7) → S5 → S7(M2) → S8(M4+M8) → S9(M9) → S10[📌Cases+P2] → S11
-```
-
-| Step | Mandatory Check | Source |
-|------|----------------|--------|
-| P1 | Conceptual framework match · select one or combine | §P1 |
-| S1a | M6: Five-tier defense breach analysis | §M6 |
-| S4 | M7: Three-step causal attribution self-check | §M7 |
-| S7 | M2: Signal strength · weak signals require 2+ sources | §M2 |
-| S8 | M4: Liability allocation + M8: First-layer breakdown A/B/C | §M4 §M8 |
-| S9 | M9: Three-item scapegoat audit | §M9 |
-| S10 | Qualitative conclusion + sanction recommendation → Append P2 procedural guidance | §P2 |
-
-## 🔴 P2 Procedural Guidance (v2.3 New · Appended After S10)
-
-| Rule | Applicable Scenario |
-|------|-------------------|
-| Penalty Matching | Grassroots self-governing personnel not subject to heavy administrative sanctions → supplement with order to resign / suspend subsidies |
-| Four Asset Disposition Types | Confiscation · Recovery · Seizure · Order to Restitute → choose method based on funding source |
-| Four Taboos of Accountability | Blaming subordinates but not superiors · Pursuing speed over accuracy · One-size-fits-all · Holding accountable without providing management support |
-| Retirement ≠ Immunity | Retired persons not subject to administrative sanctions → apply disciplinary action residual clause |
-
-## 🏥 Medical Case Culpability Specialty (2026-07-18 from PC-005)
-
-When the case involves medical error/negligence, add the following analysis before M4 accountability positioning:
-
-### Medical Culpability Three-Step
-1. **Subjective state differentiation**: Negligent oversight ≠ Overconfident negligence ≠ Intentional violation — the qualitative difference is massive
-2. **Individual-System responsibility cut**: Operating error (individual) / Institutional defect (system) / Resource insufficiency (context) — different responsibility levels
-3. **Four-track parallel**: Party discipline + Administrative discipline + Administrative penalty + Criminal liability — competition analysis
-
-**Key principle**: Medical error ≠ necessarily a disciplinary violation. Grade I Class A medical error ≠ necessarily medical malpractice crime (Criminal Law Art. 335 requires "gross irresponsibility").
-
-## 🔴 Fixed Requirements
-1. **Applicability Argumentation**: Each cited regulation includes field-specific justification
-2. **Adversarial Argumentation**: `strongest_opposing_view` → `why_rejected` → `residual_uncertainty`
-3. **Lesson Write-back**: New insights discovered → `[LESSON]`
-
-## 🔴 Procedural Compliance: Content Over Forms ⛔ (2026-07-18 from PC-007)
-When analyzing procedural compliance, three principles:
-1. **Regulations prescribe content elements, NOT form count** — Article 27 of the Supervision Rules requires three content elements (approval request + interview plan + work contingency), not three separate forms. Merging into a single "Discipline Inspection Interview Approval Form" is compliant as long as it contains both the plan content AND the approval process.
-2. **Verbatim source tracing** — "Supervisory organ" ≠ "Discipline inspection and supervision organ" — every regulatory citation must be verified against the original text (PKULaw version check), not paraphrased from memory.
-3. **Approval levels are not one-size-fits-all** — Local implementation rules vary by jurisdiction; distinguish general vs. specific scenarios (e.g., witness interview vs. subject interview have different approval authorities).
-4. **Procedural vehicle ≠ Statutory evidence** — Approval forms can be merged; interview records/transcripts cannot be omitted.
-
-## Output Format
-```yaml
-review_analysis_v2.3:
-P1_conceptual_framework: [Three Distinctions/From Style to Corruption/Superficiality vs. Malice/Seeing Through Appearance to Essence]
-1_basic_facts: [Party/Person/Facts/Regulations]
-2_fact_finding: Violation[✅/❌] M6[breach_layer] M7[bias] Accountability[...] Exemption[...]
-3_case_comparison: S3_use_similar_cases S10_use_direct_precedent
-4_adversarial_argumentation: counter_case strongest_opposing_view/why_rejected/residual_uncertainty
-5_enhanced_analysis: M2[reliability] M4[Layer_X] M8[A/B/C/--]
-6_conclusion: M9[risk] Qualitative:[...] Disposition:[...]
-7_P2_procedural_guidance: [Penalty_Matching/Asset_Disposition/Four_Taboos/Retirement_Rules]
-8_institutional_improvement: [Recommendations]
-```
-
-## 🔵 Output Schema (v2.4)
-
-**⛔ The JSON output must match these keys EXACTLY. The YAML template in `## Output Format` is a SEMANTIC GUIDE — actual JSON keys are defined HERE.**
-
-```json
-{
-  "required": ["review_analysis_v2_3", "1_basic_facts", "2_violation_analysis", 
-               "3_responsibility_assessment", "adversarial_debate", "case_matches"],
-  "review_analysis_v2_3": { "required": ["P1_conceptual_framework"] },
-  "1_basic_facts": { "required": ["party", "person", "facts", "regulations"] },
-  "2_violation_analysis": { "required": ["violation_finding", "article_match"] },
-  "3_responsibility_assessment": { "required": ["accountability_level", "sanction_recommendation"] },
-  "adversarial_debate": {
-    "required": ["prosecution_round", "defense_round", "debate_matrix", "conclusion"]
-  },
-  "case_matches": { "minItems": 1 },
-  "methodology_version": { "type": "string", "minLength": 1 },
-  "kg_enrichment": {
-    "description": "Knowledge graph 1-hop enrichment results (v2.4-P2)",
-    "required": ["nodes_matched", "concepts_enriched", "hop1_expanded"]
-  },
-  "kg_writeback": {
-    "description": "KG writeback proposals for bidirectional activation (v2.5.1 NEW)",
-    "optional": true,
-    "properties": {
-      "proposals": [{
-        "type": "new_edge | new_node | update_node",
-        "source": "string",
-        "target_node_id": "string",
-        "relationship": "string",
-        "rationale": "string",
-        "confidence": "high | medium | low"
-      }]
-    }
-  }
-}
-```
-
-Missing required field → mark Agent 3 FAILED, write `pipeline_failure_log.json`.
+## 输出规则
+写入 `memory/inspection-drafts/{task_id}/agent3-analyze.json`
+最终回复：`DONE <输出文件路径>`
 
 ---
 
-## Output Rule
-Write the result file to `memory/inspection-drafts/{task_id}/agent3-analyze.json`
-Final reply is a single line: `DONE <output file path>`
-
----
-
-## 🎯 Execution Tuning (v2.4)
-
-> Lessons from real case execution. Populated by monthly cron from `_lessons.json`.
+## 🎯 执行调优（v2.5·月度cron注入）
 
 <!-- TUNING_START -->
-(No execution tuning records yet. Monthly cron will inject from _lessons.json.)
+（无执行调优记录。月度cron从 _lessons.json 注入。）
 <!-- TUNING_END -->

@@ -1,0 +1,22 @@
+# Builtin Provider — 开箱即用·零配置
+name: builtin-provider
+version: "1.0"
+description: "DI内置默认法规包。无需WIKI、无需pkulaw订阅。装完即用。"
+
+capabilities:
+  regulation_search: true
+  version_verification: false      # 内置法规无版本验证
+  case_search: false               # 无指导性案例
+  methodology_access: true         # 双因素方法论内嵌
+
+degradation:
+  missing_version_verification: "VERSION_UNVERIFIED"  # 所有法规标注未验证版本
+  missing_regulation_search: "BLOCK"                  # 无法规→阻断
+  note: "内置3部核心法规。建议配置WIKI_PATH获取完整45+法规库，配置pkulaw获取权威版本验证。"
+
+search:
+  engine: ripgrep
+  base_path: "${SKILL_DIR}/providers/builtin/knowledge"
+  scopes:
+    discipline_laws: "${BASE}/regulations"
+    methodology: "${BASE}/methodology"

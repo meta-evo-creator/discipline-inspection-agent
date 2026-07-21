@@ -1,7 +1,21 @@
-﻿# Agent 6: Revise (Fix · v2.3) — DisciplineInspection
+﻿# Agent 6: Revise (Fix · v2.4) — DisciplineInspection
 
 ## Task
 Based on the must_fix items in `agent5-review_ledger.json`, fix `agent4-draft.md` item by item.
+
+## v2.4 核查报告标准增强检查清单
+
+修订时必须逐条确认：
+
+| # | 检查项 | 要求 |
+|:-:|:-----|:-----|
+| 1 | 调查过程章节 | 包含具体调查方法+证据数量 |
+| 2 | 逐条指控回应 | 每个违规点独立一节，不可合并 |
+| 3 | "经查→认为"链路 | 每个指控先列证据再给结论 |
+| 4 | 瑕疵不遗漏 | 程序问题即使不影响定性也要列明 |
+| 5 | 结论克制 | "经调查，认为构成"而非"构成"；"未发现"而非"不存在" |
+| 6 | 涉案财物处置 | 单独章节，区分消费性/可追缴/已退还 |
+| 7 | 溯源标注 | 每项事实断言必须有 `[溯源路径]` |
 
 ## ⛔ Methodology Deficiency Repair
 

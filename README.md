@@ -1,230 +1,82 @@
-# Discipline-Inspection ⚔️ v2.5.1
+# DI 纪律审查智能系统 ⚔️
 
-> **Discipline as the yardstick. Constant vigilance.** 10-Agent Full-Gate Pipeline × Schema Gates (100% coverage) × Dual-Round Adversarial Debate × Case Structured Index (11 cases) × Pipeline Resilience × LESSON Collection with Urgency Routing × Quality Dashboard × Knowledge Graph Activation × Case Ruling Logic (L1/L2/L3).
-
-An AI-powered case analysis engine for party discipline inspection: feed in case facts → parallel regulation search + version verification → merge → audit → dual-round adversarial analysis with case matching → draft → review → revise → publish with lesson feedback loop.
+> **AI 驱动的纪律审查管线——从线索到谈话提纲，全流程自动化。**
+> 10 Agent · 双因素分析 · 六维评分 · 开箱即用
 
 ---
 
-## 🚀 Quick Start
-
-### Out-of-the-box (demo mode)
+## 30 秒安装
 
 ```bash
-git clone https://github.com/meta-evo-creator/discipline-inspection-agent.git
-cd discipline-inspection-agent
-# No configuration needed — default knowledge pack includes 3 core regulations
+# 1. 确保已安装 Hermes Agent
+hermes --version
+
+# 2. 下载 DI skill
+cd ~/AppData/Local/hermes/skills/
+git clone https://github.com/meta-evo-creator/discipline-inspection.git
+
+# 3. 首次验证
+python skills/discipline-inspection/scripts/di_check.py
 ```
 
-Feed case facts into Agent 0 (Scope). The pipeline runs automatically. Output includes ⚠️ version-unverified markers.
-
-### Production use
-
-```bash
-# 1. Configure regulation database
-export WIKI_PATH=/path/to/wiki/main/sources
-
-# 2. (Optional) Configure version verification
-# Install pkulaw-search skill + pkulaw-mcp service
-```
-
-With configuration, the pipeline unlocks 45+ regulations + PKULaw version verification.
+看到 `✅ 全部检查通过` 即可使用。**零配置，内置 3 部核心法规。**
 
 ---
 
-## Three-Tier Value
+## 三种用法
 
-| Tier | No Knowledge Source | Default Pack | Full WIKI + PKULaw |
-|:--:|:--------------------|:-------------|:-------------------|
-| 🥇 **Methodology** | ✅ Dual-factor / 24-char scoring | — | — |
-| 🥈 **Pipeline Architecture** | ✅ 10-Agent Full-Gate / Guardrail Routing | — | — |
-| 🥉 **Runnable Instance** | — | ✅ 3 regulation demo | ✅ 45+ regs + cases + version verify |
+### 快速咨询
+直接问 DI Agent：
+> "王某是中共党员、外科主任，2023年5月收了医药代表一台5000元的咖啡机。帮我分析。"
 
----
+### 谈话提纲
+发送完整线索，Agent 自动生成谈话手册：
+> "我院收到以下线索：1.……2.……3.……帮我写谈话提纲。"
 
-## Pipeline Architecture (v2.5.1)
-
-```
-Phase 0: Scope           → Problem framing (outputs regulation_list)
-Phase 1a ∥ 1b:           → Reg search + Version verification (PARALLEL)
-Phase 1c: Merge          → 3-way merge of 1a + 1b (Schema-gated)
-Phase 2: Audit           → Citation audit & cross-verification
-Phase 3: Analyze         → ⭐ Dual-Round Adversarial Debate
-                           Round 1: Prosecution analysis
-                           Round 2: Defense challenge (3-point rebuttal matrix)
-                           + ⭐ Case matching (11-case structured index)
-                           + 🔵 KG activation (1-hop enrichment + writeback)
-Phase 4: Draft           → Report / interview outline (7 chapters incl. case refs)
-Phase 5: Review          → 6-D scoring (24-Character Policy) + debate completeness audit
-Phase 6: Revise          → Fixes based on review
-Phase 7: Publish         → Upload + LESSON collection + Quality Dashboard
-```
-
-**Guardrail-routed modes:**
-- `full`: Case qualification / sanction recommendation (10 Agents)
-- `interview`: Interview outline (6 Agents)
-- `quick`: Regulation consultation / article lookup (5 Agents)
+### 完整案件分析
+标准 10-Agent 全管线——法规检索 → 版本验证 → 双因素分析 → 对抗辩论 → 质量评分 → 报告生成。
 
 ---
 
-## Knowledge Source Architecture
+## 配置（可选）
 
-The pipeline is decoupled from the regulation data layer via a **Provider interface**:
+编辑 `di-config.yaml`：
 
-```
-┌─────────────────────────────────────────┐
-│         DI 10-Agent Pipeline            │
-│  (methodology + analysis + scoring)     │
-└──────────┬─────────────┬────────────────┘
-           │             │
-    ┌──────▼──────┐ ┌───▼──────────┐
-    │ Regulation  │ │ Version      │
-    │ Search      │ │ Verification │
-    │ Provider    │ │ Provider     │
-    └──────┬──────┘ └───┬──────────┘
-           │             │
-    ┌──────▼──────┐ ┌───▼──────────┐
-    │ default     │ │ pkulaw       │
-    │ wiki        │ │ (PKULaw)     │
-    │ custom...   │ │              │
-    └─────────────┘ └──────────────┘
+```yaml
+regulation_source: builtin   # builtin | wiki | web
+wiki_path: ""               # WIKI 法规库路径（wiki模式需要）
+pkulaw: disabled            # 北大法宝版本验证
+ima:
+  enabled: false            # IMA 知识库上传
+  kb_id: ""
 ```
 
-See: [`providers/regulation-source.interface.md`](providers/regulation-source.interface.md)
+默认 `builtin` 模式无需配置任何东西。
 
 ---
 
-## Dependencies
+## 能力
 
-### Runtime
-- **OpenClaw** — Agent pipeline runtime
-- **ripgrep** (`rg`) — Full-text regulation search
-- **Python 3** — pkulaw-search script (optional)
-
-### Optional
-| Dependency | Capability | Behavior When Missing |
-|:-----------|:-----------|:----------------------|
-| WIKI regulation DB (45+) | Full-text search, guiding cases | Degrades to 3 core regulations (demo) |
-| pkulaw-mcp | Version/timeliness verification | All regulations marked VERSION_UNVERIFIED; pipeline not blocked |
-| PKULaw subscription | Data source for pkulaw-mcp | Same as above |
+| | builtin（免费） | wiki + pkulaw（完整） |
+|:-----|:--:|:--:|
+| 法规数量 | 3 部核心法规 | 45+ 部全文 |
+| 版本验证 | ❌ | ✅ pkulaw 权威验证 |
+| 指导性案例 | ❌ | ✅ 11 个 CCDI 案例 |
+| 通用案例模式 | ❌ | ✅ P01-P05 违规模式 |
+| 知识图谱 | ❌ | ✅ 131 节点/136 边 |
+| IMA 上传 | ❌ | ✅ |
+| 分析方法论 | ✅ 双因素+六维评分 | ✅ 全部 |
 
 ---
 
-## Directory Structure
+## 文档
 
-```
-discipline-inspection-agent/
-├── SKILL.md                    # Full skill specification
-├── README.md                   # This file
-├── agents/                     # 10 Agent prompts
-│   ├── scope.md
-│   ├── search-rg.md
-│   ├── search-pkulaw.md
-│   ├── merge.md                # v2.5: dedicated agent file with Schema Gate
-│   ├── audit.md
-│   ├── analyze.md              # v2.5: dual-round debate + KG activation + writeback
-│   ├── draft.md
-│   ├── review.md
-│   ├── revise.md
-│   └── publish.md              # v2.5.1: LESSON + Quality Dashboard agent
-├── providers/                  # Pluggable knowledge layer 🔌
-│   ├── regulation-source.interface.md
-│   ├── default/                # Bundled demo regulation pack
-│   │   ├── provider.yaml
-│   │   └── knowledge/
-│   ├── wiki/                   # Local WIKI regulation DB adapter
-│   │   └── provider.yaml
-│   └── pkulaw/                 # PKULaw version verification adapter
-│       └── provider.yaml
-└── references/                 # Reference documents
-    ├── scoring-matrix.md
-    ├── changelog.md            # Full version history
-    └── case-index.json         # v2.5: 11-case index with L1/L2/L3 ruling logic
-```
+- [双因素分析方法论](METHODOLOGY.md) — 违规+有责分析框架
+- [配置文件说明](di-config.yaml) — 所有可配置项
+- [Agent 管线架构](SKILL.md) — 10 Agent 完整说明
 
 ---
 
-## Methodology (v2.3)
+## 许可
 
-### Core Framework: Dual-Factor Analysis (violation + culpability)
-
-> Source: CCDI Case Review Office — *Introduction and Connotation of "Disciplinary Reasoning"*
-
-```
-Violation (objective elements)  ×  Culpability (subjective elements)  =  Disciplinary Violation
-├─ Conduct facts                   ├─ Mental state (intent / negligence)
-├─ Legal basis                     ├─ Degree of knowledge
-├─ Harm to protected interests     ├─ Motive / purpose
-├─ Continuity (one-off vs. systemic) ├─ Post-conduct behavior
-└─ Severity (amount, frequency,     └─ Identity overlay (party member /
-   scope, consequences)                public official obligations)
-
-Violation = Violation Elements Satisfied + Culpability Elements Satisfied + No Exculpatory Circumstances
-```
-
-### Enhancement Modules (6 core modules for DI)
-
-Five system-thinking tools augment the base dual-factor analysis:
-
-| Module | Tool | Question It Answers | Phase |
-|:-------|:-----|:--------------------|:------|
-| **M2: Market for Lemons** | Akerlof signaling theory | Can we distinguish compliance from violation signals? | Evidence verification |
-| **M4: Four-Tier Accountability** | Layered culpability model | Which tier does the culpability belong to? | Deepened culpability judgment |
-| **M6: Swiss Cheese Audit** ⭐ | Reason's accident causation | What latent conditions enabled the active failure? | Violation identification |
-| **M7: Attribution Calibration** ⭐ | Fundamental attribution error | Is the reviewer exhibiting attribution bias? | Culpability judgment |
-| **M8: Just Culture Refinement** ⭐ | Dekker's just culture algorithm | Human error, at-risk behavior, or reckless conduct? | Sanction calibration |
-| **M9: Scapegoat Risk Audit** ⭐ | Organizational scapegoating | Is someone being unfairly singled out? | Pre-conclusion safeguard |
-
-> ⭐ = Added in v2.3. M1 (Incentive Compatibility), M3 (Unintended Consequences), and Triple-Mirror Analysis moved to Compliance Analysis (CA) skill per v2.3 specialization.
-
-### Operational Flow: 3 Stages × 11 Steps + Enhancement Nodes
-
-```
-Stage 1: Fact Finding
-  S1 Violation ID → S1a Swiss Cheese Audit 🔍 → S2 Legal basis → S3 Validation
-
-Stage 2: Enhanced Analysis
-  S4 Culpability → S4a Attribution Calibration 🧠 → S5 Evidence chain
-  S6 Lemons Signal Audit 📡 → S7 Four-Tier Accountability Mapping
-  S8 Sanction range → S8a Just Culture Refinement ⚖️
-
-Stage 3: Conclusion
-  S9 Counter-argument → S9a Scapegoat Audit 🛡️ → S10 Scoring → S11 Output
-```
-
-### Key Features (v2.3)
-
-**Dual-Round Adversarial Debate** — Agent 3 runs two rounds: Round 1 as prosecution (standard analysis), Round 2 as defense (role-switch, 3 strongest counterpoints). Each counterpoint assessed for validity and impact on conclusion. Prevents cognitive blind spots that single-pass analysis misses.
-
-**Case Structured Index** — 11 CCDI guiding cases indexed by 7 feature dimensions (violation type, subject level, amount range, mental state, penalty severity). Agent 3 builds a case profile and matches against the index using rule-based similarity scoring — no ML required.
-
-### 24-Character Guideline 6-Dimension Scoring
-
-| # | Dimension | Weight | Description |
-|:-:|:----------|:------:|:------------|
-| 1 | Accurate characterization | 25% | Complete regulation citation? Exact text match? Three-element verification? |
-| 2 | Clear facts | 20% | Complete behavioral chain? Temporal/spatial/financial linkage clear? |
-| 3 | Solid evidence | 20% | Evidence inventory complete? Indirect evidence chain viable? |
-| 4 | Appropriate disposition | 15% | Sanction range matches regulation and facts? Scenario matrix adequate? |
-| 5 | Complete procedures | 10% | Interview procedures compliant? Rights/obligations disclosed? |
-| 6 | Compliant process | 10% | Investigation strategy lawful? Evidence collection path legal? |
-
----
-
-## License
-
-This repository contains:
-- Pipeline code / methodology / scoring framework: MIT License
-- Regulation texts (`providers/default/knowledge/`): Sourced from publicly available Chinese government legal documents (public domain)
-- Authoritative legal texts should be verified against official NPC/State Council publications
-
----
-
-## Disclaimer
-
-This tool produces **candidate references only**. It does not replace:
-- Formal decisions of disciplinary committee meetings or approval procedures
-- Professional judgment of discipline inspection officials
-- Advice from qualified legal professionals
-
-Users are responsible for independently verifying regulation version validity and factual accuracy.
+MIT License

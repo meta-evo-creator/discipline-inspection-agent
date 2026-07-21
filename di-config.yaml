@@ -1,0 +1,33 @@
+# DI 纪律审查智能系统 — 用户配置文件
+# 只改这一个文件，不改任何 Agent 代码
+
+# ── 法规搜索源 ──────────────────────────
+# wiki   = 本地 WIKI 法规库（45+法规）—— 需要设置 WIKI_PATH
+# builtin = 内置默认法规包（3部核心法规）—— 开箱即用，零配置
+# web    = 只走 Tavily 网页搜索 —— 无本地法规
+regulation_source: builtin
+
+# ── WIKI 路径（仅 regulation_source=wiki 时需要）────
+wiki_path: ""
+
+# ── PKULaw 版本验证 ─────────────────────
+# enabled  = 启用北大法宝版本验证（需要 pkulaw-mcp 订阅）
+# disabled = 跳过版本验证，所有法规标注 VERSION_UNVERIFIED
+pkulaw: disabled
+
+# ── IMA 知识库上传 ──────────────────────
+# enabled + kb_id = 报告上传到指定知识库
+# disabled        = 不自动上传
+ima:
+  enabled: false
+  kb_id: ""
+
+# ── 通知推送 ────────────────────────────
+# enabled = 分析完成后推送到消息平台
+# disabled = 不推送
+notify:
+  enabled: false
+
+# ── 输出路径 ────────────────────────────
+# 报告和中间文件保存位置
+output_dir: "./memory/inspection-drafts"

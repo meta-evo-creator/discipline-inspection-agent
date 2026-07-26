@@ -1,0 +1,36 @@
+# Default Provider — Built-in Sample Regulation Pack
+# For demo/testing/quick trial only. For full use, configure wiki-provider or pkulaw-provider.
+
+name: "default-provider"
+version: "1.0"
+description: "Built-in sample regulation pack: 3 core regulations + methodology documents. For demo only, not for real case analysis."
+
+capabilities:
+  regulation_search: true       # Can search full text of 3 core regulations
+  version_verification: false   # ❌ No PKULaw, cannot verify version timeliness
+  case_search: false            # ❌ No guiding cases
+  methodology_access: true      # ✅ Includes dual-factor (violation + culpability) methodology
+
+degradation:
+  missing_version_verification: "VERSION_UNVERIFIED"
+  note: >-
+    The default knowledge pack contains only the full text of three regulations
+    (Disciplinary Punishment Regulations, Supervision Law, Administrative Punishment Law)
+    and the dual-factor (violation + culpability) methodology. No guiding cases
+    and no regulation version verification capability.
+    
+    ⚠️ All analysis results produced using this Provider have regulation version
+    timeliness UNVERIFIED by PKULaw and must NOT be used directly for formal case
+    characterization or sanction recommendations.
+    
+    For full capability, configure:
+    1. wiki-provider: Set WIKI_PATH environment variable to point to a local WIKI regulation database
+    2. pkulaw-provider: Configure PKULaw MCP service
+
+search:
+  engine: "ripgrep"
+  base_path: "${SKILL_DIR}/providers/default/knowledge"
+  scopes:
+    discipline_laws: "${SKILL_DIR}/providers/default/knowledge/regulations"
+    methodology: "${SKILL_DIR}/providers/default/knowledge/methodology"
+  note: "Search scope limited to the paths above. No additional configuration required after git clone."

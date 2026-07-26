@@ -1,0 +1,21 @@
+# PKULaw Provider — PKULaw MCP Version Verification
+# Requires pkulaw-mcp service and pkulaw-search skill to be available
+# Used in combination with wiki-provider: wiki handles full-text search, pkulaw handles version verification
+
+name: "pkulaw-provider"
+version: "1.0"
+description: "PKULaw MCP — Regulation version/timeliness verification (currently effective/amended/abolished)"
+
+capabilities:
+  regulation_search: true       # ✅ Can semantically search regulations via PKULaw
+  version_verification: true    # ✅ Core capability: verify current effective status of regulations
+  case_search: false            # ❌ Guiding cases not yet available via PKULaw
+
+degradation:
+  missing_version_verification: "N/A — This provider's core capability IS version verification"
+  note: "If pkulaw-mcp is unavailable (network error, etc.), Agent 1b marks all regulations as VERSION_UNVERIFIED. Version verification failure does not block the pipeline (degraded annotation), but the pipeline output includes ⚠️ warnings."
+
+search:
+  engine: "pkulaw-mcp"
+  script: "${SKILL_DIR}/../pkulaw-search/scripts/pkulaw_search.py"
+  note: "Requires pkulaw-search skill to be installed + pkulaw-mcp service to be running."

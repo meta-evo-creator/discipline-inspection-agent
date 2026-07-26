@@ -1,0 +1,21 @@
+# DI Discipline Inspection Agent — Configuration
+# ===============================================
+
+# Regulation source: builtin | wiki | web
+#   builtin — 3 core regulations included (zero config)
+#   wiki    — local WIKI regulation database (45+ regulations)
+#   web     — search public government websites
+regulation_source: builtin
+
+# WIKI path (required for wiki mode)
+# Set to the root directory of your local regulation database
+wiki_path: ""
+
+# PKULaw version verification
+pkulaw:
+  enabled: false
+
+# IMA knowledge base upload
+ima:
+  enabled: false
+  kb_id: ""

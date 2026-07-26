@@ -1,0 +1,28 @@
+# Wiki Provider — Local WIKI Regulation Database
+# Requires a locally compiled WIKI regulation database (45+ full regulation texts + 11 guiding cases)
+# Set the WIKI_PATH environment variable to point to wiki/main/sources
+
+name: "wiki-provider"
+version: "1.0"
+description: "Local WIKI Regulation Database — ripgrep full-text search of 45+ regulations + 11 guiding cases + methodology documents"
+
+capabilities:
+  regulation_search: true       # ✅ Full-text ripgrep search of 45+ regulations
+  version_verification: false   # Version verification requires stacking pkulaw-provider
+  case_search: true             # ✅ 11 CCDI guiding cases
+  methodology_access: true      # ✅ Dual-factor (violation + culpability) + intent alignment methodology
+
+degradation:
+  missing_version_verification: "VERSION_UNVERIFIED"
+  note: "The WIKI database contains regulation frontmatter version annotations, but version timeliness requires pkulaw-provider cross-verification. Without pkulaw-provider, Agent 1b outputs VERSION_UNVERIFIED."
+
+search:
+  engine: "ripgrep"
+  base_path: "${WIKI_PATH}"
+  scopes:
+    discipline_laws: "${WIKI_PATH}/discipline/regulations"
+    medical_laws: "${WIKI_PATH}/medical"
+    cases: "${WIKI_PATH}/discipline/guiding-cases"
+    hospital: "${WIKI_PATH}/hospital-inspection"
+    inspection: "${WIKI_PATH}/inspection"
+    methodology: "${WIKI_PATH}/discipline/methodology"

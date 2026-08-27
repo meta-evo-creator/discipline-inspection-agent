@@ -1,8 +1,7 @@
 ---
 name: discipline-inspection
 version: 2.8.1
-description: |
-  Discipline Inspection v2.8 ⚔️ Three routing modes: quick(法规咨询·搜索审计不可跳过), interview(谈话手册·8段标准), full(审理建议·五部分V5样式). 9-Agent Full-Gate Pipeline + 四护栏(范文注入·复述理解·回炉重写·主会话终审) + QJ情节认定框架 + 违规+有责主线 + 案例匹配 + 医疗/双目录搜索 + 脱敏输出.
+description: "Discipline Inspection v2.8 - Three routing modes: quick (regulation consultation, search audit cannot be skipped), interview (talk outline, 8-segment standard), full (hearing recommendation, five-part V5 style). 9-Agent Full-Gate Pipeline + four guardrails (template injection, restatement comprehension, rewrite loop, main-session final review) + QJ circumstance determination framework + violation and accountability main line + case precedent matching + medical/dual-directory search + anonymized output."
 platforms:
   - openclaw
 tools:
@@ -14,7 +13,6 @@ metadata:
   openclaw:
     emoji: ⚔️
 ---
-
 # Discipline-Inspection ⚔️ v2.8
 
 > **Discipline as the yardstick, vigilance as constant.** 9-Agent Full-Gate Pipeline + Schema Gates (100% coverage) + 🌟 Case Precedent Matching (v2.7·Agent3自动比对中纪委指导性案例) + Grounded Citations (v0.20.0原生·每条引用溯源到原文)。
